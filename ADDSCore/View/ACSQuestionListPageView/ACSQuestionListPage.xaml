@@ -1,0 +1,121 @@
+﻿<Page x:Class="ADDSCore.View.ACSQuestionListPageView.ACSQuestionListPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ADDSCore.View.ACSQuestionListPageView"
+      xmlns:fa="http://schemas.fontawesome.com/icons/"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ACSQuestionListPage">
+    <Page.Resources>
+        <Style BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" TargetType="Button">
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Margin" Value="5,2,5,2"/>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <ToolBar Grid.Row="0">
+            <StackPanel Orientation="Horizontal">
+                <!--Add button-->
+                <Button x:Name="Add" ToolTip="Добавить новый опросный лист" Command="{Binding AddCommand}">
+                    <fa:ImageAwesome Icon="Solid_Plus" Width="20"/>
+                </Button>
+                <!--Save button-->
+                <Button x:Name="Save" ToolTip="Сохранить изменения в БД" Command="{Binding}">
+                    <fa:ImageAwesome Icon="Solid_Save" Width="20"/>
+                </Button>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
+                <!--Undo button-->
+                <!--Add CommandParameter = "{Binding "Param"}-->
+                <Button x:Name="Undo" ToolTip="Отменить" Command="{Binding UndoCommand}">
+                    <fa:ImageAwesome Icon="Solid_Undo" Width="20"/>
+                </Button>
+                <!--Redo button-->
+                <!--Add CommandParameter = "{Binding "Param"}-->
+                <Button x:Name="Redo" ToolTip="Вернуть" Command="{Binding RedoCommand}">
+                    <fa:ImageAwesome Icon="Solid_Redo" Width="20"/>
+                </Button>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
+                <!--Find button-->
+                <Button x:Name="Find" ToolTip="Найти" Command="{Binding FindCommand}">
+                    <fa:ImageAwesome Icon="Solid_Search" Width="20"/>
+                </Button>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
+                <!--Delete button-->
+                <!--Add CommandParameter = "{Binding "Param"}-->
+                <Button x:Name="Delete" ToolTip="Удалить" Command="{Binding DeleteCommand}">
+                    <fa:ImageAwesome Icon="Solid_Trash" Width="20"/>
+                </Button>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
+                <!--Exprot to word button-->
+                <Button x:Name="Export" ToolTip="Экспорт в Word" Command="{Binding ExportCommand}" CommandParameter="{Binding SelectedList}">
+                    <fa:ImageAwesome Icon="Solid_FileWord" Width="20"/>
+                </Button>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
+                <!--Open list button-->
+                <Button x:Name="Link" ToolTip="Открыть" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedList}">
+                    <fa:ImageAwesome Icon="Solid_ExternalLinkAlt" Width="20"/>
+                </Button>
+            </StackPanel>
+        </ToolBar>
+
+        <TabControl Grid.Row="1" Margin="3,10">
+            <TabItem Header="АСУ" FontSize="16">
+                <TabItem.Content>
+                    <DataGrid x:Name="ACSMainDataGrid"  AutoGenerateColumns="False" EnableRowVirtualization="True" 
+                              ItemsSource="{Binding QuestionLists}"
+                              SelectedItem="{Binding SelectedList}"
+                              RowDetailsVisibilityMode="VisibleWhenSelected">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Id}" Header="№" Width="SizeToHeader"/>
+                            <DataGridTextColumn Binding="{Binding Name}" Header="Наименование" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding ControlObject}" Header="Объект управления" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding ControlObjectAnalog}" Header="Аналог объекта управления" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding ControlStruct}" Header="Структура АСУ" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding Network}" Header="Сетевой протокол" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding Software}" Header="ПО" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding Document}" Header="Документация" Width="*"/>
+                        </DataGrid.Columns>
+
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <StackPanel Background="#4A5F93" Margin="5,5,5,5">
+                                    <TextBlock Text="Список оборудования" FontSize="18" Foreground="White"/>
+                                    <DataGrid x:Name="ACSHardwareDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True"
+                                              ItemsSource="{Binding ControlCab}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Binding="{Binding Id}" Header="№" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding Cabinet}" Header="Шкаф" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding SuppVoltage}" Header="Напр.питания" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding ControlVoltage}" Header="Опер.напр.цепи управления" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding MainFreq}" Header="Ном. частота сети" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding Protect}" Header="Степень защиты" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding Climate}" Header="Климатическое исполнение" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding CabCompos}" Header="Состав" Width="auto"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                    <TextBlock Text="Список контролируемых параметров" FontSize="18" Foreground="White"/>
+                                    <DataGrid x:Name="ACSParamDataGrid" Grid.Row="2" AutoGenerateColumns="False" EnableRowVirtualization="True"
+                                              ItemsSource="{Binding Param}"
+                                              RowDetailsVisibilityMode="VisibleWhenSelected">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Binding="{Binding Id}" Header="№" Width="auto"/>
+                                            <DataGridTextColumn Binding ="{Binding ControlUnit}" Header="Агрегат управления" Width="auto"/>
+                                            <DataGridTextColumn Binding ="{Binding ControlParams}" Header="Контролируемые параметры" Width="auto"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
+                    </DataGrid>
+                </TabItem.Content>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>
