@@ -7,6 +7,13 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
-        Title="{Binding Title}" Height="450" Width="800" ResizeMode="CanMinimize">
-    <ContentControl x:Name="ContentPresenter" Content="{Binding}"/>
+        Title="{Binding Title}" Height="450" Width="800" WindowStyle="None">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.06*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="{Binding Title}" Margin="3"/>
+        <ContentControl Grid.Row="1" x:Name="ContentPresenter" Content="{Binding}"/>
+    </Grid>
 </Window>

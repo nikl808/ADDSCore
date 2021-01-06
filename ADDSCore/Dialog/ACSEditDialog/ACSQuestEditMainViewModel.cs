@@ -14,10 +14,14 @@ namespace ADDSCore.Dialog.ACSEditDialog
     public class ACSQuestEditMainViewModel : DialogViewBaseModel<AutoConSysQuestList>
     {
         public AutoConSysQuestList currList { get; set; }
+        public ObservableCollection<Hardware> Cabinets { get; set; }
+        public ObservableCollection<Parameter> Parameters { get; set; }
         private IDialogService dialogService;
         public ACSQuestEditMainViewModel(string title, AutoConSysQuestList list) : base(title)
         {
             currList = list;
+            Cabinets = new ObservableCollection<Hardware>(list.ControlCab);
+            Parameters = new ObservableCollection<Parameter>(list.Param);
             dialogService = new DialogService();
 
             NetworkComboItems = new ObservableCollection<ComboBoxItem>()
@@ -46,6 +50,35 @@ namespace ADDSCore.Dialog.ACSEditDialog
         }
         #endregion
 
+        #region toolbar commands
+        //print command
+        private UICommand printCommand;
+        public UICommand PrintCommand
+        {
+            get {
+                return printCommand ??
+                   (printCommand = new UICommand(obj =>
+                   {
+                       //implementation
+                   }));
+            }
+        }
+
+        //send email command
+        private UICommand sendMessCommand;
+        public UICommand SendMessCommand
+        {
+            get
+            {
+                return sendMessCommand ??
+                   (sendMessCommand = new UICommand(obj =>
+                   {
+                       //implementation
+                   }));
+            }
+        }
+
+        //apply button command
         private UICommand applyCommand;
         public UICommand ApplyCommand
         {
@@ -59,7 +92,9 @@ namespace ADDSCore.Dialog.ACSEditDialog
                 ));
             }
         }
+        
 
+        //cancel button command
         private UICommand cancelCommand;
         public UICommand CancelCommand
         {
@@ -73,7 +108,17 @@ namespace ADDSCore.Dialog.ACSEditDialog
                 ));
             }
         }
+        #endregion
 
+        #region cabinet listview commands
+        //select item
+        private Hardware selectedCab;
+        public Hardware SelectedCab
+        {
+            get { return selectedCab; }
+            set { selectedCab = value; }
+        }
+        //add button command
         private UICommand addCabCommand;
         public UICommand AddCabCommand
         {
@@ -84,10 +129,12 @@ namespace ADDSCore.Dialog.ACSEditDialog
                     {
                         var dialog = new ACSEditHwViewModel("Добавить шкаф");
                         var result = dialogService.OpenDialog(dialog);
+                        if (result != null)
+                            Cabinets.Insert(Cabinets.Count, result);
                     }));
             }
         }
-
+        //remove button command
         private UICommand removeCabCommand;
         public UICommand RemoveCabCommand
         {
@@ -96,11 +143,24 @@ namespace ADDSCore.Dialog.ACSEditDialog
                 return removeCabCommand ??
                     (removeCabCommand = new UICommand(obj =>
                     {
-                        //do smth
-                    }));
+                        Hardware cab = obj as Hardware;
+                        if (cab != null)
+                            Cabinets.Remove(cab);
+                    },
+                    (obj) => Cabinets.Count > 0));
             }
         }
+        #endregion
 
+        #region parameter listview commands
+        //select item
+        private Parameter selectedParam;
+        public Parameter SelectedParam
+        {
+            get { return selectedParam; }
+            set { selectedParam = value; }
+        }
+        //add button command
         private UICommand addParamCommand;
         public UICommand AddParamCommand
         {
@@ -111,11 +171,13 @@ namespace ADDSCore.Dialog.ACSEditDialog
                     {
                         var dialog = new ACSEditParamViewModel("Добавить параметр");
                         var result = dialogService.OpenDialog(dialog);
+                        if (result != null)
+                            Parameters.Insert(Parameters.Count, result);
                     }
                     ));
             }
         }
-
+        //remove button command
         private UICommand removeParamCommand;
         public UICommand RemoveParamCommand
         {
@@ -124,10 +186,15 @@ namespace ADDSCore.Dialog.ACSEditDialog
                 return removeParamCommand ??
                     (removeParamCommand = new UICommand(obj =>
                     {
-                        //do smth
-                    }));
+                        Parameter param = obj as Parameter;
+                        if (param != null)
+                            Parameters.Remove(param);
+                    },
+                    (obj) => Parameters.Count > 0));
             }
         }
+        #endregion
+
         #region combobox item class
         public class ComboBoxItem
         {

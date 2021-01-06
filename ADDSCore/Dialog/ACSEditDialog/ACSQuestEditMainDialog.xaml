@@ -92,10 +92,12 @@
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}"/>
                         <Button Height="25" Width="25" FontSize="17" Margin="3" Content="-"
                                 Command="{Binding RemoveCabCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}"/>
+                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window},Path=DataContext.SelectedCab}"/>
                     </StackPanel>
                     <ListView Grid.Row="1" ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window},
-                              Path=DataContext.currList.ControlCab}">
+                              Path=DataContext.Cabinets}"
+                              SelectedItem="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window},
+                              Path=DataContext.SelectedCab}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn DisplayMemberBinding="{Binding Cabinet}">Шкаф</GridViewColumn>
@@ -122,11 +124,13 @@
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}"/>
                         <Button Height="25" Width="25" FontSize="17" Margin="3" Content="-"
                                 Command="{Binding RemoveParamCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}"/>
+                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window},Path=DataContext.SelectedParam}"/>
                     </StackPanel>
 
                     <ListView Grid.Row="1" ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window},
-                              Path=DataContext.currList.Param}">
+                              Path=DataContext.Parameters}"
+                              SelectedItem="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window},
+                              Path=DataContext.SelectedParam}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn DisplayMemberBinding="{Binding ControlUnit}">Агрегат управления</GridViewColumn>
