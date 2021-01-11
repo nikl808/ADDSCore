@@ -27,7 +27,7 @@
                     <fa:ImageAwesome Icon="Solid_Plus" Width="20"/>
                 </Button>
                 <!--Save button-->
-                <Button x:Name="Save" ToolTip="Сохранить изменения в БД" Command="{Binding}">
+                <Button x:Name="Save" ToolTip="Сохранить изменения в БД" Command="{Binding SaveCommand}">
                     <fa:ImageAwesome Icon="Solid_Save" Width="20"/>
                 </Button>
                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
@@ -81,6 +81,7 @@
                             <DataGridTextColumn Binding="{Binding Network}" Header="Сетевой протокол" Width="*"/>
                             <DataGridTextColumn Binding="{Binding Software}" Header="ПО" Width="*"/>
                             <DataGridTextColumn Binding="{Binding Document}" Header="Документация" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding Extra}" Header="Дополнительно" Width="*"/>
                         </DataGrid.Columns>
 
                         <DataGrid.RowDetailsTemplate>

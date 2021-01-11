@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ADDSCore.Model
 {
@@ -17,7 +18,9 @@ namespace ADDSCore.Model
         private string network;
         private string software;
         private string document;
+        private string extra;
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public string Name 
         {
@@ -82,6 +85,16 @@ namespace ADDSCore.Model
                 OnPropertyChanged("Document");
             }
         }
+
+        public string Extra
+        {
+            get { return extra; }
+            set 
+            { 
+                extra = value;
+                OnPropertyChanged("Extra");
+            }
+        }
         public List<Hardware> ControlCab { get; set; } = new List<Hardware>();
         public List<Parameter> Param { get; set; } = new List<Parameter>();
 
@@ -120,6 +133,7 @@ namespace ADDSCore.Model
         private string climate;
         private string cabCompos;
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
           
         public string Cabinet 
@@ -201,6 +215,7 @@ namespace ADDSCore.Model
         private string controlUnit;
         private string controlParams;
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public string ControlUnit 
         {
@@ -238,7 +253,7 @@ namespace ADDSCore.Model
         public ACSListContext(DbContextOptions<ACSListContext> options)
             : base(options)
         {
-            Database.EnsureDeleted();
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
     }

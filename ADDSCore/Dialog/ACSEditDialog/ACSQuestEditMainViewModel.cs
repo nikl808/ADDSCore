@@ -19,9 +19,19 @@ namespace ADDSCore.Dialog.ACSEditDialog
         private IDialogService dialogService;
         public ACSQuestEditMainViewModel(string title, AutoConSysQuestList list) : base(title)
         {
-            currList = list;
-            Cabinets = new ObservableCollection<Hardware>(list.ControlCab);
-            Parameters = new ObservableCollection<Parameter>(list.Param);
+            if(list != null)
+            {
+                currList = list;
+                Cabinets = new ObservableCollection<Hardware>(list.ControlCab);
+                Parameters = new ObservableCollection<Parameter>(list.Param);
+            }
+            else
+            {
+                currList = new AutoConSysQuestList();
+                Cabinets = new ObservableCollection<Hardware>();
+                Parameters = new ObservableCollection<Parameter>();
+            }
+            
             dialogService = new DialogService();
 
             NetworkComboItems = new ObservableCollection<ComboBoxItem>()
@@ -87,6 +97,9 @@ namespace ADDSCore.Dialog.ACSEditDialog
                 return applyCommand ??
                     (applyCommand = new UICommand(obj =>
                 {
+                    currList.ControlCab = new List<Hardware>(Cabinets);
+                    currList.Param = new List<Parameter>(Parameters);
+                    currList.Network = new string(networkSelectItem.Item);
                     CloseDialogWithResult(obj as IDialogWindow, currList);
                 }
                 ));
@@ -130,7 +143,11 @@ namespace ADDSCore.Dialog.ACSEditDialog
                         var dialog = new ACSEditHwViewModel("Добавить шкаф");
                         var result = dialogService.OpenDialog(dialog);
                         if (result != null)
+                        {
+                            var id = Cabinets.Count;
+                            result.Id = ++id;
                             Cabinets.Insert(Cabinets.Count, result);
+                        }
                     }));
             }
         }
@@ -172,7 +189,11 @@ namespace ADDSCore.Dialog.ACSEditDialog
                         var dialog = new ACSEditParamViewModel("Добавить параметр");
                         var result = dialogService.OpenDialog(dialog);
                         if (result != null)
+                        {
+                            var id = Parameters.Count;
+                            result.Id = ++id;
                             Parameters.Insert(Parameters.Count, result);
+                        }
                     }
                     ));
             }

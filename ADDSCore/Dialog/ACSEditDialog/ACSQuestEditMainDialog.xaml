@@ -146,11 +146,11 @@
                           AncestorType=Window},Path=DataContext.NetworkSelectItem}"
                           DisplayMemberPath="Item"/>
                 <TextBox Grid.Row="8" Grid.Column="1" DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window},
-                 Path=DataContext.currList}" Text="{Binding Network}" TextWrapping="Wrap" AcceptsReturn="True"/>
-                <TextBox Grid.Row="9" Grid.Column="1" DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window},
                  Path=DataContext.currList}" Text="{Binding Software}" TextWrapping="Wrap" AcceptsReturn="True"/>
-                    <TextBox Grid.Row="10" Grid.Column="1" DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window},
+                <TextBox Grid.Row="9" Grid.Column="1" DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window},
                  Path=DataContext.currList}" Text="{Binding Document}" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    <TextBox Grid.Row="10" Grid.Column="1" DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window},
+                 Path=DataContext.currList}" Text="{Binding Extra}" TextWrapping="Wrap" AcceptsReturn="True"/>
             </Grid>
         </ScrollViewer>
     </Grid>

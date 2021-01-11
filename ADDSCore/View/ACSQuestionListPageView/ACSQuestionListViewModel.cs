@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Data;
 using System.Text;
 using Microsoft.Extensions.Configuration;
@@ -24,15 +25,15 @@ namespace ADDSCore.View.ACSQuestionListPageView
         
         //display list to datagridview 
         public ObservableCollection<AutoConSysQuestList> QuestionLists { get; set; }
+        private List<AutoConSysQuestList> AddedQuestionLists;
+        private List<Hardware> AddedHardwareList;
+        private List<Parameter> AddedParameterList;
 
         //current selection
         private AutoConSysQuestList selectedList;
         public AutoConSysQuestList SelectedList
         {
-            get
-            {
-                return selectedList;
-            }
+            get { return selectedList; }
             set
             {
                 selectedList = value;
@@ -43,6 +44,9 @@ namespace ADDSCore.View.ACSQuestionListPageView
         public ACSQuestionListViewModel()
         {
             dialogService = new DialogService();
+            AddedQuestionLists = new List<AutoConSysQuestList>();
+            AddedHardwareList = new List<Hardware>();
+            AddedParameterList = new List<Parameter>();
             //Connect to database
             using (DbConnection connection = new DbConnection())
             {
@@ -63,46 +67,23 @@ namespace ADDSCore.View.ACSQuestionListPageView
                 return addCommand ??
                     (addCommand = new UICommand(obj =>
                     {
-                        var connection = new DbConnection();
+                        //Create dialog
+                        var dialog = new ACSQuestEditMainViewModel("Новый опросный лист", null);
+                        //Open dialog
+                        var result = dialogService.OpenDialog(dialog);
                         
-                        AutoConSysQuestList list = new AutoConSysQuestList()
+                        if (result != null)
                         {
-                            Name = "...",
-                            ControlObject = "...",
-                            ControlObjectAnalog = "...",
-                            ControlStruct = "...",
-                            Network = "...",
-                            Software = "...",
-                            Document = "..."
-                        };
+                            var id = QuestionLists.Count;
+                            result.Id = ++id;
 
-                        Hardware hw1 = new Hardware()
-                        {
-                            autoConSysQuestList = list,
-                            Cabinet = "...",
-                            SuppVoltage = "...",
-                            ControlVoltage = "...",
-                            MainFreq = "...",
-                            Protect = "...",
-                            Climate = "...",
-                            CabCompos = "..."
-                        };
-
-                        Parameter param1 = new Parameter()
-                        {
-                            autoConSysQuestList = list,
-                            ControlUnit = "...",
-                            ControlParams = "..."
-                        };
-
-                        connection.db.ACSQuestionList.Add(list);
-                        connection.db.hardware.Add(hw1);
-                        connection.db.parameter.Add(param1);
-                        connection.db.SaveChanges();
-
-                        QuestionLists.Insert(QuestionLists.Count, list);
-
-                        SelectedList = list;
+                            QuestionLists.Insert(QuestionLists.Count,result);
+                            SelectedList = result;
+                            AddedQuestionLists.Add(result);
+                            AddedHardwareList.AddRange(result.ControlCab);
+                            AddedParameterList.AddRange(result.Param);
+                            AddedHardwareList.ForEach(x => x.autoConSysQuestList = QuestionLists[QuestionLists.Count-1]);
+                        }
                     }));
             }
         }
@@ -111,7 +92,23 @@ namespace ADDSCore.View.ACSQuestionListPageView
         private UICommand saveCommand;
         public UICommand SaveCommand
         {
-            get { return saveCommand; }
+            get 
+            {
+                return saveCommand ??
+                    (saveCommand = new UICommand(obj =>
+                    {
+                       //open connection to database 
+                       var connection = new DbConnection();
+
+                        //add new line
+                        connection.db.ACSQuestionList.AddRange(AddedQuestionLists);
+                        connection.db.hardware.AddRange(AddedHardwareList);
+                        connection.db.SaveChanges();
+
+                        var all = connection.db.ACSQuestionList.Include(x => x.ControlCab).ToList();
+                    }
+                    )); 
+            }
         }
 
         //undo the last step
