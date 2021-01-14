@@ -73,11 +73,11 @@
                 <TextBlock Grid.Row="10" Grid.Column="0" Text="Дополнительно:" FontSize="16" Margin="5,50,5,50"/>
 
                 <TextBox Grid.Row="1" Grid.Column="1" DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window},
-                 Path=DataContext.currList}" Text="{Binding Name}"/>
+                 Path=DataContext.currList}" Text="{Binding ListName}"/>
                 <TextBox Grid.Row="2" Grid.Column="1" DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window},
-                 Path=DataContext.currList}" Text="{Binding ControlObject}"/>
+                 Path=DataContext.currList}" Text="{Binding ObjName}"/>
                 <TextBox Grid.Row="3" Grid.Column="1" DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window},
-                 Path=DataContext.currList}" Text="{Binding ControlObjectAnalog}"/>
+                 Path=DataContext.currList}" Text="{Binding ControlAnalog}"/>
                 <TextBox Grid.Row="4" Grid.Column="1" DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window},
                  Path=DataContext.currList}" Text="{Binding ControlStruct}" TextWrapping="Wrap" AcceptsReturn="True"/>
 
@@ -100,13 +100,13 @@
                               Path=DataContext.SelectedCab}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn DisplayMemberBinding="{Binding Cabinet}">Шкаф</GridViewColumn>
+                                <GridViewColumn DisplayMemberBinding="{Binding Name}">Шкаф</GridViewColumn>
                                 <GridViewColumn DisplayMemberBinding="{Binding SuppVoltage}">Напр.питания</GridViewColumn>
-                                <GridViewColumn DisplayMemberBinding="{Binding ControlVoltage}">Операт.напр.цепи управления</GridViewColumn>
-                                <GridViewColumn DisplayMemberBinding="{Binding MainFreq}">Ном.частота сети</GridViewColumn>
-                                <GridViewColumn DisplayMemberBinding="{Binding Protect}">Степень защиты</GridViewColumn>
+                                <GridViewColumn DisplayMemberBinding="{Binding OperatVoltage}">Операт.напр.цепи управления</GridViewColumn>
+                                <GridViewColumn DisplayMemberBinding="{Binding RatedFreq}">Ном.частота сети</GridViewColumn>
+                                <GridViewColumn DisplayMemberBinding="{Binding ProtectLevel}">Степень защиты</GridViewColumn>
                                 <GridViewColumn DisplayMemberBinding="{Binding Climate}">Климатическое исполнение</GridViewColumn>
-                                <GridViewColumn DisplayMemberBinding="{Binding CabCompos}">Состав</GridViewColumn>
+                                <GridViewColumn DisplayMemberBinding="{Binding Composition}">Состав</GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -133,8 +133,8 @@
                               Path=DataContext.SelectedParam}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn DisplayMemberBinding="{Binding ControlUnit}">Агрегат управления</GridViewColumn>
-                                <GridViewColumn DisplayMemberBinding="{Binding ControlParams}">Контролируемые параметры</GridViewColumn>
+                                <GridViewColumn DisplayMemberBinding="{Binding ControlHwName}">Агрегат управления</GridViewColumn>
+                                <GridViewColumn DisplayMemberBinding="{Binding Parameter}">Контролируемые параметры</GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>

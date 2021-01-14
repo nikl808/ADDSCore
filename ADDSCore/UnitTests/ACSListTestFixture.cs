@@ -12,6 +12,7 @@ namespace ADDSCore.UnitTests
 {
     class ACSListTestFixture
     {
+        /*
         private ACSListContext db;
 
         [SetUp]
@@ -125,6 +126,6 @@ namespace ADDSCore.UnitTests
         public void TeardownTest()
         {
             db.Dispose();
-        }
+        }*/
     }
 }

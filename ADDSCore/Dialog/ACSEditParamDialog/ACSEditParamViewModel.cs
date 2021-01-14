@@ -7,7 +7,7 @@ using ADDSCore.Model;
 
 namespace ADDSCore.Dialog.ACSEditParamDialog
 {
-    public class ACSEditParamViewModel:DialogViewBaseModel<Parameter>
+    public class ACSEditParamViewModel:DialogViewBaseModel<ControlParameter>
     {
         public string ControlUnit { get; set; }
         public string ControlParams { get; set; }
@@ -27,10 +27,10 @@ namespace ADDSCore.Dialog.ACSEditParamDialog
                     (saveCommand = new UICommand(obj =>
                     {
                         CloseDialogWithResult(obj as IDialogWindow,
-                            new Parameter
+                            new ControlParameter
                             { 
-                                ControlUnit = ControlUnit,
-                                ControlParams = ControlParams
+                                ControlHwName = ControlUnit,
+                                Parameter = ControlParams
                             });
                     }));
             }

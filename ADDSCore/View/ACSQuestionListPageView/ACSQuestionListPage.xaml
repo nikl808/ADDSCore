@@ -69,19 +69,18 @@
             <TabItem Header="АСУ" FontSize="16">
                 <TabItem.Content>
                     <DataGrid x:Name="ACSMainDataGrid"  AutoGenerateColumns="False" EnableRowVirtualization="True" 
-                              ItemsSource="{Binding QuestionLists}"
+                              ItemsSource="{Binding QuestionLists, Mode=TwoWay}"
                               SelectedItem="{Binding SelectedList}"
                               RowDetailsVisibilityMode="VisibleWhenSelected">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding Id}" Header="№" Width="SizeToHeader"/>
-                            <DataGridTextColumn Binding="{Binding Name}" Header="Наименование" Width="*"/>
-                            <DataGridTextColumn Binding="{Binding ControlObject}" Header="Объект управления" Width="*"/>
-                            <DataGridTextColumn Binding="{Binding ControlObjectAnalog}" Header="Аналог объекта управления" Width="*"/>
-                            <DataGridTextColumn Binding="{Binding ControlStruct}" Header="Структура АСУ" Width="*"/>
-                            <DataGridTextColumn Binding="{Binding Network}" Header="Сетевой протокол" Width="*"/>
-                            <DataGridTextColumn Binding="{Binding Software}" Header="ПО" Width="*"/>
-                            <DataGridTextColumn Binding="{Binding Document}" Header="Документация" Width="*"/>
-                            <DataGridTextColumn Binding="{Binding Extra}" Header="Дополнительно" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding Path = ListName}" Header="Наименование" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding Path = ObjName}" Header="Объект управления" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding Path = ControlAnalog}" Header="Аналог объекта управления" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding Path = ControlStruct}" Header="Структура АСУ" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding Path = Network}" Header="Сетевой протокол" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding Path = Software}" Header="ПО" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding Path = Document}" Header="Документация" Width="*"/>
+                            <DataGridTextColumn Binding="{Binding Path = Extra}" Header="Дополнительно" Width="*"/>
                         </DataGrid.Columns>
 
                         <DataGrid.RowDetailsTemplate>
@@ -89,26 +88,24 @@
                                 <StackPanel Background="#4A5F93" Margin="5,5,5,5">
                                     <TextBlock Text="Список оборудования" FontSize="18" Foreground="White"/>
                                     <DataGrid x:Name="ACSHardwareDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True"
-                                              ItemsSource="{Binding ControlCab}">
+                                              ItemsSource="{Binding Path = Cabinet, Mode=TwoWay}">
                                         <DataGrid.Columns>
-                                            <DataGridTextColumn Binding="{Binding Id}" Header="№" Width="auto"/>
-                                            <DataGridTextColumn Binding="{Binding Cabinet}" Header="Шкаф" Width="auto"/>
-                                            <DataGridTextColumn Binding="{Binding SuppVoltage}" Header="Напр.питания" Width="auto"/>
-                                            <DataGridTextColumn Binding="{Binding ControlVoltage}" Header="Опер.напр.цепи управления" Width="auto"/>
-                                            <DataGridTextColumn Binding="{Binding MainFreq}" Header="Ном. частота сети" Width="auto"/>
-                                            <DataGridTextColumn Binding="{Binding Protect}" Header="Степень защиты" Width="auto"/>
-                                            <DataGridTextColumn Binding="{Binding Climate}" Header="Климатическое исполнение" Width="auto"/>
-                                            <DataGridTextColumn Binding="{Binding CabCompos}" Header="Состав" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding Path = Name}" Header="Шкаф" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding Path = SuppVoltage}" Header="Напр.питания" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding Path = OperatVoltage}" Header="Опер.напр.цепи управления" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding Path = RatedFreq}" Header="Ном. частота сети" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding Path = ProtectLevel}" Header="Степень защиты" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding Path = Climate}" Header="Климатическое исполнение" Width="auto"/>
+                                            <DataGridTextColumn Binding="{Binding Path = Composition}" Header="Состав" Width="auto"/>
                                         </DataGrid.Columns>
                                     </DataGrid>
                                     <TextBlock Text="Список контролируемых параметров" FontSize="18" Foreground="White"/>
                                     <DataGrid x:Name="ACSParamDataGrid" Grid.Row="2" AutoGenerateColumns="False" EnableRowVirtualization="True"
-                                              ItemsSource="{Binding Param}"
+                                              ItemsSource="{Binding Path = Parameter}"
                                               RowDetailsVisibilityMode="VisibleWhenSelected">
                                         <DataGrid.Columns>
-                                            <DataGridTextColumn Binding="{Binding Id}" Header="№" Width="auto"/>
-                                            <DataGridTextColumn Binding ="{Binding ControlUnit}" Header="Агрегат управления" Width="auto"/>
-                                            <DataGridTextColumn Binding ="{Binding ControlParams}" Header="Контролируемые параметры" Width="auto"/>
+                                            <DataGridTextColumn Binding ="{Binding Path = ControlHwName}" Header="Агрегат управления" Width="auto"/>
+                                            <DataGridTextColumn Binding ="{Binding Path = Parameter}" Header="Контролируемые параметры" Width="auto"/>
                                         </DataGrid.Columns>
                                     </DataGrid>
                                 </StackPanel>

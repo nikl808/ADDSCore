@@ -11,25 +11,26 @@ using ADDSCore.Dialog.ACSEditParamDialog;
 
 namespace ADDSCore.Dialog.ACSEditDialog
 {
-    public class ACSQuestEditMainViewModel : DialogViewBaseModel<AutoConSysQuestList>
+    public class ACSQuestEditMainViewModel : DialogViewBaseModel<AutomaSysQuestnaire>
     {
-        public AutoConSysQuestList currList { get; set; }
-        public ObservableCollection<Hardware> Cabinets { get; set; }
-        public ObservableCollection<Parameter> Parameters { get; set; }
+        public AutomaSysQuestnaire currList { get; set; }
+        public ObservableCollection<HwCabinet> Cabinets { get; set; }
+        
+        public ObservableCollection<ControlParameter> Parameters { get; set; }
         private IDialogService dialogService;
-        public ACSQuestEditMainViewModel(string title, AutoConSysQuestList list) : base(title)
+        public ACSQuestEditMainViewModel(string title, AutomaSysQuestnaire list) : base(title)
         {
             if(list != null)
             {
                 currList = list;
-                Cabinets = new ObservableCollection<Hardware>(list.ControlCab);
-                Parameters = new ObservableCollection<Parameter>(list.Param);
+                Cabinets = new ObservableCollection<HwCabinet>(list.Cabinet);
+                Parameters = new ObservableCollection<ControlParameter>(list.Parameter);
             }
             else
             {
-                currList = new AutoConSysQuestList();
-                Cabinets = new ObservableCollection<Hardware>();
-                Parameters = new ObservableCollection<Parameter>();
+                currList = new AutomaSysQuestnaire();
+                Cabinets = new ObservableCollection<HwCabinet>();
+                Parameters = new ObservableCollection<ControlParameter>();
             }
             
             dialogService = new DialogService();
@@ -97,8 +98,8 @@ namespace ADDSCore.Dialog.ACSEditDialog
                 return applyCommand ??
                     (applyCommand = new UICommand(obj =>
                 {
-                    currList.ControlCab = new List<Hardware>(Cabinets);
-                    currList.Param = new List<Parameter>(Parameters);
+                    currList.Cabinet = new List<HwCabinet>(Cabinets);
+                    currList.Parameter = new List<ControlParameter>(Parameters);
                     currList.Network = new string(networkSelectItem.Item);
                     CloseDialogWithResult(obj as IDialogWindow, currList);
                 }
@@ -125,8 +126,8 @@ namespace ADDSCore.Dialog.ACSEditDialog
 
         #region cabinet listview commands
         //select item
-        private Hardware selectedCab;
-        public Hardware SelectedCab
+        private HwCabinet selectedCab;
+        public HwCabinet SelectedCab
         {
             get { return selectedCab; }
             set { selectedCab = value; }
@@ -144,8 +145,6 @@ namespace ADDSCore.Dialog.ACSEditDialog
                         var result = dialogService.OpenDialog(dialog);
                         if (result != null)
                         {
-                            var id = Cabinets.Count;
-                            result.Id = ++id;
                             Cabinets.Insert(Cabinets.Count, result);
                         }
                     }));
@@ -160,7 +159,7 @@ namespace ADDSCore.Dialog.ACSEditDialog
                 return removeCabCommand ??
                     (removeCabCommand = new UICommand(obj =>
                     {
-                        Hardware cab = obj as Hardware;
+                        HwCabinet cab = obj as HwCabinet;
                         if (cab != null)
                             Cabinets.Remove(cab);
                     },
@@ -171,8 +170,8 @@ namespace ADDSCore.Dialog.ACSEditDialog
 
         #region parameter listview commands
         //select item
-        private Parameter selectedParam;
-        public Parameter SelectedParam
+        private ControlParameter selectedParam;
+        public ControlParameter SelectedParam
         {
             get { return selectedParam; }
             set { selectedParam = value; }
@@ -190,9 +189,7 @@ namespace ADDSCore.Dialog.ACSEditDialog
                         var result = dialogService.OpenDialog(dialog);
                         if (result != null)
                         {
-                            var id = Parameters.Count;
-                            result.Id = ++id;
-                            Parameters.Insert(Parameters.Count, result);
+                           Parameters.Insert(Parameters.Count, result);
                         }
                     }
                     ));
@@ -207,7 +204,7 @@ namespace ADDSCore.Dialog.ACSEditDialog
                 return removeParamCommand ??
                     (removeParamCommand = new UICommand(obj =>
                     {
-                        Parameter param = obj as Parameter;
+                        ControlParameter param = obj as ControlParameter;
                         if (param != null)
                             Parameters.Remove(param);
                     },

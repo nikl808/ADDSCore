@@ -15,6 +15,7 @@ using ADDSCore.Dialog.ACSEditDialog;
 
 namespace ADDSCore.View.ACSQuestionListPageView
 {
+    enum ListState {ADDED, EXIST_CHANGE, EXIST_DELETE }
     class ACSQuestionListViewModel:INotifyPropertyChanged
     {
         //...
@@ -22,16 +23,15 @@ namespace ADDSCore.View.ACSQuestionListPageView
         //Добавить окно поиска по бд
 
         private IDialogService dialogService;
-        
-        //display list to datagridview 
-        public ObservableCollection<AutoConSysQuestList> QuestionLists { get; set; }
-        private List<AutoConSysQuestList> AddedQuestionLists;
-        private List<Hardware> AddedHardwareList;
-        private List<Parameter> AddedParameterList;
 
+        //display list to datagridview 
+        public BindingList<AutomaSysQuestnaire> QuestionLists { get; set; }
+
+        private Dictionary<int, ListState> listChanges;
+        
         //current selection
-        private AutoConSysQuestList selectedList;
-        public AutoConSysQuestList SelectedList
+        private AutomaSysQuestnaire selectedList;
+        public AutomaSysQuestnaire SelectedList
         {
             get { return selectedList; }
             set
@@ -44,17 +44,16 @@ namespace ADDSCore.View.ACSQuestionListPageView
         public ACSQuestionListViewModel()
         {
             dialogService = new DialogService();
-            AddedQuestionLists = new List<AutoConSysQuestList>();
-            AddedHardwareList = new List<Hardware>();
-            AddedParameterList = new List<Parameter>();
+            listChanges = new Dictionary<int, ListState>();
+
             //Connect to database
             using (DbConnection connection = new DbConnection())
             {
                 //load entities into EF Core
-                connection.db.ACSQuestionList.Load();
+                connection.db.AutomaQuestnaire.Load();
 
                 //bind to the source
-                QuestionLists = new ObservableCollection<AutoConSysQuestList>(connection.db.ACSQuestionList.Local.ToObservableCollection());
+                QuestionLists = new BindingList<AutomaSysQuestnaire>(connection.db.AutomaQuestnaire.Local.ToList());
             }
         }
 
@@ -74,15 +73,9 @@ namespace ADDSCore.View.ACSQuestionListPageView
                         
                         if (result != null)
                         {
-                            var id = QuestionLists.Count;
-                            result.Id = ++id;
-
                             QuestionLists.Insert(QuestionLists.Count,result);
                             SelectedList = result;
-                            AddedQuestionLists.Add(result);
-                            AddedHardwareList.AddRange(result.ControlCab);
-                            AddedParameterList.AddRange(result.Param);
-                            AddedHardwareList.ForEach(x => x.autoConSysQuestList = QuestionLists[QuestionLists.Count-1]);
+                            listChanges.Add(result.Id, ListState.ADDED);
                         }
                     }));
             }
@@ -98,14 +91,42 @@ namespace ADDSCore.View.ACSQuestionListPageView
                     (saveCommand = new UICommand(obj =>
                     {
                        //open connection to database 
-                       var connection = new DbConnection();
+                       var context = new DbConnection();
 
-                        //add new line
-                        connection.db.ACSQuestionList.AddRange(AddedQuestionLists);
-                        connection.db.hardware.AddRange(AddedHardwareList);
-                        connection.db.SaveChanges();
-
-                        var all = connection.db.ACSQuestionList.Include(x => x.ControlCab).ToList();
+                        foreach (var it in listChanges)
+                        {
+                            //add new entry
+                            if (it.Value == ListState.ADDED)
+                            {
+                                if(context.db.AutomaQuestnaire.Find(it.Key)==null)
+                                {
+                                    context.db.AutomaQuestnaire.Add(QuestionLists[it.Key]);
+                                    
+                                    context.db.SaveChanges();
+                                }
+                            }
+                            //update exist entry
+                            else if(it.Value == ListState.EXIST_CHANGE)
+                            {
+                                var autoQuest = context.db.AutomaQuestnaire.Find(it.Key);
+                                
+                                if (autoQuest != null)
+                                {
+                                    autoQuest.ListName = QuestionLists[it.Key].ListName;
+                                    autoQuest.ObjName = QuestionLists[it.Key - 1].ObjName;
+                                    autoQuest.ControlAnalog = QuestionLists[it.Key - 1].ControlAnalog;
+                                    autoQuest.ControlStruct = QuestionLists[it.Key - 1].ControlStruct;
+                                    autoQuest.Network = QuestionLists[it.Key - 1].Network;
+                                    autoQuest.Software = QuestionLists[it.Key - 1].Software;
+                                    autoQuest.Document = QuestionLists[it.Key - 1].Document;
+                                    autoQuest.Extra = QuestionLists[it.Key - 1].Extra;
+                                    autoQuest.Cabinet = QuestionLists[it.Key - 1].Cabinet;
+                                    autoQuest.Parameter = QuestionLists[it.Key - 1].Parameter;
+                                    context.db.SaveChanges();
+                                }
+                            }
+                            
+                        }
                     }
                     )); 
             }
@@ -151,11 +172,7 @@ namespace ADDSCore.View.ACSQuestionListPageView
                 return deleteCommand ??
                 (deleteCommand = new UICommand(obj =>
                 {
-                    AutoConSysQuestList list = obj as AutoConSysQuestList;
-                    if (list != null)
-                    {
-                        //do smthg
-                    }
+                    
                 },
                 (obj) => QuestionLists.Count > 0));
             }
@@ -170,11 +187,7 @@ namespace ADDSCore.View.ACSQuestionListPageView
                 return exportCommand ??
                     (exportCommand = new UICommand(obj =>
                     {
-                        AutoConSysQuestList list = obj as AutoConSysQuestList;
-                        if (list != null)
-                        {
-                            //do smthg
-                        }
+                        
                     },
                     (obj) => QuestionLists.Count > 0));
             }
@@ -188,19 +201,20 @@ namespace ADDSCore.View.ACSQuestionListPageView
                 return editCommand ??
                     (editCommand = new UICommand(obj =>
                     {
-                    AutoConSysQuestList list = obj as AutoConSysQuestList;
+                    AutomaSysQuestnaire list = obj as AutomaSysQuestnaire;
                     var index = QuestionLists.IndexOf(SelectedList);
                     
                         if (list != null)
                         {
                             //Create dialog
-                            var dialog = new ACSQuestEditMainViewModel("Редактирование: " + list.Name,new AutoConSysQuestList(list));
+                            var dialog = new ACSQuestEditMainViewModel("Редактирование: " + list.ListName,new AutomaSysQuestnaire(list));
                             //Open dialog
                             var result = dialogService.OpenDialog(dialog);
                             if (result != null)
                             {
                                 QuestionLists[index] = result;
                                 SelectedList = result;
+                                if (!listChanges.ContainsKey(result.Id)) listChanges.Add(result.Id, ListState.EXIST_CHANGE);
                             }
                         }
                     },

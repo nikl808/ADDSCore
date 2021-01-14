@@ -8,7 +8,7 @@ using ADDSCore.Model;
 
 namespace ADDSCore.Dialog.ACSEditHwDialog
 {
-    public class ACSEditHwViewModel : DialogViewBaseModel<Hardware>
+    public class ACSEditHwViewModel : DialogViewBaseModel<HwCabinet>
     {
         #region class fields
         public string ProtLev { get; set; }
@@ -129,15 +129,15 @@ namespace ADDSCore.Dialog.ACSEditHwDialog
                     (saveCommand = new UICommand(obj =>
                     {
                         CloseDialogWithResult(obj as IDialogWindow,
-                            new Hardware
+                            new HwCabinet
                             {
-                                Cabinet = CabinetSelectItem.Item,
+                                Name = CabinetSelectItem.Item,
                                 SuppVoltage = SupVoltSelectItem.Item,
-                                ControlVoltage = ContrVoltSelectItem.Item,
-                                MainFreq = FreqSelectItem.Item,
-                                Protect = ProtLev,
+                                OperatVoltage = ContrVoltSelectItem.Item,
+                                RatedFreq = FreqSelectItem.Item,
+                                ProtectLevel = ProtLev,
                                 Climate = Climate,
-                                CabCompos = Compos
+                                Composition = Compos
                             });
                     }));
             }
