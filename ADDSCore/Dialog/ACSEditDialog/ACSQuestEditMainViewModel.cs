@@ -62,32 +62,7 @@ namespace ADDSCore.Dialog.ACSEditDialog
         #endregion
 
         #region toolbar commands
-        //print command
-        private UICommand printCommand;
-        public UICommand PrintCommand
-        {
-            get {
-                return printCommand ??
-                   (printCommand = new UICommand(obj =>
-                   {
-                       //implementation
-                   }));
-            }
-        }
-
-        //send email command
-        private UICommand sendMessCommand;
-        public UICommand SendMessCommand
-        {
-            get
-            {
-                return sendMessCommand ??
-                   (sendMessCommand = new UICommand(obj =>
-                   {
-                       //implementation
-                   }));
-            }
-        }
+        
 
         //apply button command
         private UICommand applyCommand;

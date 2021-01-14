@@ -22,12 +22,6 @@
         </Grid.RowDefinitions>
         <!--Toolbar definition-->
         <ToolBar Grid.Row="0" Grid.ColumnSpan="3">
-            <Button Name="Print" ToolTip="Печать" Margin="5,2">
-                <fa:ImageAwesome Icon="Solid_Print" Width="20"/>
-            </Button>
-            <Button Name="Mail" ToolTip="Отправить" Margin="5,2">
-                <fa:ImageAwesome Icon="Solid_Envelope" Width="20"/>
-            </Button>
             <Button Name="Apply" ToolTip="Применить изменения" Margin="5,2"
                     Command="{Binding ApplyCommand}"
                     CommandParameter="{Binding RelativeSource = {RelativeSource Mode=FindAncestor,AncestorType=Window}}">

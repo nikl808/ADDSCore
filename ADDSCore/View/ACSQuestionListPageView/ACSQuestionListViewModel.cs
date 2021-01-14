@@ -18,17 +18,17 @@ namespace ADDSCore.View.ACSQuestionListPageView
     enum ListState {ADDED, EXIST_CHANGE, EXIST_DELETE }
     class ACSQuestionListViewModel:INotifyPropertyChanged
     {
-        //...
-        //Добавить окно диалога сохранения
-        //Добавить окно поиска по бд
 
         private IDialogService dialogService;
 
         //display list to datagridview 
         public BindingList<AutomaSysQuestnaire> QuestionLists { get; set; }
 
-        private Dictionary<int, ListState> listChanges;
+        private Dictionary<int, ListState> listChanges;//rename to actualChanges
         
+        private Stack<Tuple<int, AutomaSysQuestnaire, ListState>> undoChanges;
+        private Stack<Tuple<int, AutomaSysQuestnaire, ListState>> redoChanges;
+
         //current selection
         private AutomaSysQuestnaire selectedList;
         public AutomaSysQuestnaire SelectedList
@@ -75,7 +75,7 @@ namespace ADDSCore.View.ACSQuestionListPageView
                         {
                             QuestionLists.Insert(QuestionLists.Count,result);
                             SelectedList = result;
-                            listChanges.Add(result.Id, ListState.ADDED);
+                            listChanges.Add(QuestionLists.Count-1, ListState.ADDED);
                         }
                     }));
             }
@@ -98,35 +98,32 @@ namespace ADDSCore.View.ACSQuestionListPageView
                             //add new entry
                             if (it.Value == ListState.ADDED)
                             {
-                                if(context.db.AutomaQuestnaire.Find(it.Key)==null)
-                                {
-                                    context.db.AutomaQuestnaire.Add(QuestionLists[it.Key]);
-                                    
-                                    context.db.SaveChanges();
-                                }
+                                context.db.AutomaQuestnaire.Add(QuestionLists[it.Key]);
+                                context.db.SaveChanges();
                             }
                             //update exist entry
                             else if(it.Value == ListState.EXIST_CHANGE)
                             {
-                                var autoQuest = context.db.AutomaQuestnaire.Find(it.Key);
+                                var find = QuestionLists[it.Key].Id;
+                                var autoQuest = context.db.AutomaQuestnaire.Find(find);
                                 
                                 if (autoQuest != null)
                                 {
                                     autoQuest.ListName = QuestionLists[it.Key].ListName;
-                                    autoQuest.ObjName = QuestionLists[it.Key - 1].ObjName;
-                                    autoQuest.ControlAnalog = QuestionLists[it.Key - 1].ControlAnalog;
-                                    autoQuest.ControlStruct = QuestionLists[it.Key - 1].ControlStruct;
-                                    autoQuest.Network = QuestionLists[it.Key - 1].Network;
-                                    autoQuest.Software = QuestionLists[it.Key - 1].Software;
-                                    autoQuest.Document = QuestionLists[it.Key - 1].Document;
-                                    autoQuest.Extra = QuestionLists[it.Key - 1].Extra;
-                                    autoQuest.Cabinet = QuestionLists[it.Key - 1].Cabinet;
-                                    autoQuest.Parameter = QuestionLists[it.Key - 1].Parameter;
+                                    autoQuest.ObjName = QuestionLists[it.Key].ObjName;
+                                    autoQuest.ControlAnalog = QuestionLists[it.Key].ControlAnalog;
+                                    autoQuest.ControlStruct = QuestionLists[it.Key].ControlStruct;
+                                    autoQuest.Network = QuestionLists[it.Key].Network;
+                                    autoQuest.Software = QuestionLists[it.Key].Software;
+                                    autoQuest.Document = QuestionLists[it.Key].Document;
+                                    autoQuest.Extra = QuestionLists[it.Key].Extra;
+                                    autoQuest.Cabinet = QuestionLists[it.Key].Cabinet;
+                                    autoQuest.Parameter = QuestionLists[it.Key].Parameter;
                                     context.db.SaveChanges();
                                 }
                             }
-                            
                         }
+                        listChanges.Clear();
                     }
                     )); 
             }
@@ -178,18 +175,31 @@ namespace ADDSCore.View.ACSQuestionListPageView
             }
         }
 
-        //export entry to word and save
-        private UICommand exportCommand;
-        public UICommand ExportCommand
+        //print command
+        private UICommand printCommand;
+        public UICommand PrintCommand
         {
             get
             {
-                return exportCommand ??
-                    (exportCommand = new UICommand(obj =>
-                    {
-                        
-                    },
-                    (obj) => QuestionLists.Count > 0));
+                return printCommand ??
+                   (printCommand = new UICommand(obj =>
+                   {
+                       //implementation
+                   }));
+            }
+        }
+
+        //send email command
+        private UICommand sendMessCommand;
+        public UICommand SendMessCommand
+        {
+            get
+            {
+                return sendMessCommand ??
+                   (sendMessCommand = new UICommand(obj =>
+                   {
+                       //implementation
+                   }));
             }
         }
 
@@ -214,7 +224,7 @@ namespace ADDSCore.View.ACSQuestionListPageView
                             {
                                 QuestionLists[index] = result;
                                 SelectedList = result;
-                                if (!listChanges.ContainsKey(result.Id)) listChanges.Add(result.Id, ListState.EXIST_CHANGE);
+                                if (!listChanges.ContainsKey(index)) listChanges.Add(index, ListState.EXIST_CHANGE);
                             }
                         }
                     },

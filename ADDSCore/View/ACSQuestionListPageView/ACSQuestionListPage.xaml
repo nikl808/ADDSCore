@@ -5,10 +5,18 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ADDSCore.View.ACSQuestionListPageView"
       xmlns:fa="http://schemas.fontawesome.com/icons/"
+      xmlns:converters="clr-namespace:ADDSCore.Utils"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ACSQuestionListPage">
     <Page.Resources>
+        <DataTemplate x:Key="ExpandDetails">
+            <ToggleButton Name="ShowDetails" 
+                          IsChecked="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, 
+                Path=DetailsVisibility,
+                Converter={converters:VisibilityToBooleanConverter},Mode=TwoWay}" Margin="4"/>
+        </DataTemplate>
+        
         <Style BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" TargetType="Button">
             <Setter Property="Width" Value="30"/>
             <Setter Property="Margin" Value="5,2,5,2"/>
@@ -53,12 +61,16 @@
                     <fa:ImageAwesome Icon="Solid_Trash" Width="20"/>
                 </Button>
                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
-                <!--Exprot to word button-->
-                <Button x:Name="Export" ToolTip="Экспорт в Word" Command="{Binding ExportCommand}" CommandParameter="{Binding SelectedList}">
-                    <fa:ImageAwesome Icon="Solid_FileWord" Width="20"/>
+                <!--Print button-->
+                <Button Name="Print" ToolTip="Печать" Margin="5,2" Command="{Binding PrintCommand}" CommandParameter="{Binding SelectedList}">
+                    <fa:ImageAwesome Icon="Solid_Print" Width="20"/>
+                </Button>
+                <!--Send email button-->
+                <Button Name="Mail" ToolTip="Отправить" Margin="5,2" Command="{Binding SendMessCommand}" CommandParameter="{Binding SelectedList}">
+                    <fa:ImageAwesome Icon="Solid_Envelope" Width="20"/>
                 </Button>
                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
-                <!--Open list button-->
+                <!--Open edit window button-->
                 <Button x:Name="Link" ToolTip="Открыть" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedList}">
                     <fa:ImageAwesome Icon="Solid_ExternalLinkAlt" Width="20"/>
                 </Button>
@@ -68,11 +80,13 @@
         <TabControl Grid.Row="1" Margin="3,10">
             <TabItem Header="АСУ" FontSize="16">
                 <TabItem.Content>
-                    <DataGrid x:Name="ACSMainDataGrid"  AutoGenerateColumns="False" EnableRowVirtualization="True" 
+                    <!--Main Datagrid-->
+                    <DataGrid x:Name="ACSMainDataGrid"  AutoGenerateColumns="False" EnableRowVirtualization="True" IsReadOnly="True"
                               ItemsSource="{Binding QuestionLists, Mode=TwoWay}"
                               SelectedItem="{Binding SelectedList}"
-                              RowDetailsVisibilityMode="VisibleWhenSelected">
+                              RowDetailsVisibilityMode="Collapsed">
                         <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="" CellTemplate="{StaticResource ExpandDetails}" Width="30"/>
                             <DataGridTextColumn Binding="{Binding Path = ListName}" Header="Наименование" Width="*"/>
                             <DataGridTextColumn Binding="{Binding Path = ObjName}" Header="Объект управления" Width="*"/>
                             <DataGridTextColumn Binding="{Binding Path = ControlAnalog}" Header="Аналог объекта управления" Width="*"/>
@@ -85,10 +99,12 @@
 
                         <DataGrid.RowDetailsTemplate>
                             <DataTemplate>
+                                <Border BorderThickness="2,0,0,0" Margin="30,0,0,0" BorderBrush="Gray">
                                 <StackPanel Background="#4A5F93" Margin="5,5,5,5">
+                                    <!--Hardware cabinets datagrid-->
                                     <TextBlock Text="Список оборудования" FontSize="18" Foreground="White"/>
                                     <DataGrid x:Name="ACSHardwareDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True"
-                                              ItemsSource="{Binding Path = Cabinet, Mode=TwoWay}">
+                                              ItemsSource="{Binding Path = Cabinet, Mode=TwoWay}" IsReadOnly="True">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Binding="{Binding Path = Name}" Header="Шкаф" Width="auto"/>
                                             <DataGridTextColumn Binding="{Binding Path = SuppVoltage}" Header="Напр.питания" Width="auto"/>
@@ -99,16 +115,19 @@
                                             <DataGridTextColumn Binding="{Binding Path = Composition}" Header="Состав" Width="auto"/>
                                         </DataGrid.Columns>
                                     </DataGrid>
+                                        
+                                    <!--Parameters datagrid-->
                                     <TextBlock Text="Список контролируемых параметров" FontSize="18" Foreground="White"/>
                                     <DataGrid x:Name="ACSParamDataGrid" Grid.Row="2" AutoGenerateColumns="False" EnableRowVirtualization="True"
                                               ItemsSource="{Binding Path = Parameter}"
-                                              RowDetailsVisibilityMode="VisibleWhenSelected">
+                                              IsReadOnly="True">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Binding ="{Binding Path = ControlHwName}" Header="Агрегат управления" Width="auto"/>
                                             <DataGridTextColumn Binding ="{Binding Path = Parameter}" Header="Контролируемые параметры" Width="auto"/>
                                         </DataGrid.Columns>
                                     </DataGrid>
                                 </StackPanel>
+                                </Border>
                             </DataTemplate>
                         </DataGrid.RowDetailsTemplate>
                     </DataGrid>
