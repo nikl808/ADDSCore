@@ -41,12 +41,11 @@
                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
                 <!--Undo button-->
                 <!--Add CommandParameter = "{Binding "Param"}-->
-                <Button x:Name="Undo" ToolTip="Отменить" Command="{Binding UndoCommand}">
+                <Button x:Name="Undo" ToolTip="Отменить" Command="{Binding UndoCommand}" CommandParameter="{Binding SelectedList}">
                     <fa:ImageAwesome Icon="Solid_Undo" Width="20"/>
                 </Button>
                 <!--Redo button-->
-                <!--Add CommandParameter = "{Binding "Param"}-->
-                <Button x:Name="Redo" ToolTip="Вернуть" Command="{Binding RedoCommand}">
+                <Button x:Name="Redo" ToolTip="Вернуть" Command="{Binding RedoCommand}" CommandParameter="{Binding SelectedList}">
                     <fa:ImageAwesome Icon="Solid_Redo" Width="20"/>
                 </Button>
                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
@@ -56,8 +55,7 @@
                 </Button>
                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
                 <!--Delete button-->
-                <!--Add CommandParameter = "{Binding "Param"}-->
-                <Button x:Name="Delete" ToolTip="Удалить" Command="{Binding DeleteCommand}">
+                <Button x:Name="Delete" ToolTip="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedList}">
                     <fa:ImageAwesome Icon="Solid_Trash" Width="20"/>
                 </Button>
                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>

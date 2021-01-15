@@ -15,7 +15,7 @@ using ADDSCore.Dialog.ACSEditDialog;
 
 namespace ADDSCore.View.ACSQuestionListPageView
 {
-    enum ListState {ADDED, EXIST_CHANGE, EXIST_DELETE }
+    enum ListState {ADDED, ADDED_DELETE, EXIST_CHANGE, EXIST_DELETE }
     class ACSQuestionListViewModel:INotifyPropertyChanged
     {
 
@@ -24,7 +24,7 @@ namespace ADDSCore.View.ACSQuestionListPageView
         //display list to datagridview 
         public BindingList<AutomaSysQuestnaire> QuestionLists { get; set; }
 
-        private Dictionary<int, ListState> listChanges;//rename to actualChanges
+        private Dictionary<int, ListState> actualChanges;//rename to actualChanges
         
         private Stack<Tuple<int, AutomaSysQuestnaire, ListState>> undoChanges;
         private Stack<Tuple<int, AutomaSysQuestnaire, ListState>> redoChanges;
@@ -44,7 +44,9 @@ namespace ADDSCore.View.ACSQuestionListPageView
         public ACSQuestionListViewModel()
         {
             dialogService = new DialogService();
-            listChanges = new Dictionary<int, ListState>();
+            actualChanges = new Dictionary<int, ListState>();
+            undoChanges = new Stack<Tuple<int, AutomaSysQuestnaire, ListState>>();
+            redoChanges = new Stack<Tuple<int, AutomaSysQuestnaire, ListState>>();
 
             //Connect to database
             using (DbConnection connection = new DbConnection())
@@ -75,7 +77,10 @@ namespace ADDSCore.View.ACSQuestionListPageView
                         {
                             QuestionLists.Insert(QuestionLists.Count,result);
                             SelectedList = result;
-                            listChanges.Add(QuestionLists.Count-1, ListState.ADDED);
+                            actualChanges.Add(QuestionLists.Count-1, ListState.ADDED);
+                            
+                            //push new list
+                            undoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(QuestionLists.Count - 1, result, ListState.ADDED));
                         }
                     }));
             }
@@ -93,7 +98,7 @@ namespace ADDSCore.View.ACSQuestionListPageView
                        //open connection to database 
                        var context = new DbConnection();
 
-                        foreach (var it in listChanges)
+                        foreach (var it in actualChanges)
                         {
                             //add new entry
                             if (it.Value == ListState.ADDED)
@@ -123,7 +128,7 @@ namespace ADDSCore.View.ACSQuestionListPageView
                                 }
                             }
                         }
-                        listChanges.Clear();
+                        actualChanges.Clear();
                     }
                     )); 
             }
@@ -135,8 +140,25 @@ namespace ADDSCore.View.ACSQuestionListPageView
         {
             get
             {
-                return undoCommand;
-                //добавить условие доступности комманды (Если есть записи)
+                return undoCommand ??
+                    (undoCommand = new UICommand(obj =>
+                    {
+                        //pop first value
+                        var currPop = undoChanges.Pop();
+
+                        //push to redo stack
+                        redoChanges.Push(currPop);
+
+                        if (currPop.Item3 == ListState.ADDED || currPop.Item3 == ListState.EXIST_CHANGE)
+                            QuestionLists[currPop.Item1] = currPop.Item2;
+
+                        else if (currPop.Item3 == ListState.ADDED_DELETE || currPop.Item3 == ListState.EXIST_DELETE)
+                        {
+                            QuestionLists.RemoveAt(currPop.Item1);
+                            actualChanges.Remove(currPop.Item1);
+                        }
+                    },
+                    (obj) => undoChanges.Count > 0));
             }
         }
 
@@ -146,7 +168,22 @@ namespace ADDSCore.View.ACSQuestionListPageView
         {
             get
             {
-                return redoCommand;
+                return redoCommand ??
+                    (redoCommand = new UICommand(obj => 
+                    {
+                        //pop first value
+                        var currPop = redoChanges.Pop();
+                        
+                        //push to undo stack
+                        undoChanges.Push(currPop);
+
+                        if (currPop.Item3 == ListState.ADDED_DELETE || currPop.Item3 == ListState.EXIST_DELETE)
+                        {
+                            QuestionLists.Insert(currPop.Item1,currPop.Item2);
+                            actualChanges.Add(currPop.Item1, currPop.Item3 == ListState.ADDED_DELETE ? ListState.ADDED : ListState.EXIST_CHANGE); 
+                        }
+                    },
+                    (obj) => redoChanges.Count > 0));
             }
         }
 
@@ -169,7 +206,19 @@ namespace ADDSCore.View.ACSQuestionListPageView
                 return deleteCommand ??
                 (deleteCommand = new UICommand(obj =>
                 {
-                    
+                    AutomaSysQuestnaire list = obj as AutomaSysQuestnaire;
+                    var index = QuestionLists.IndexOf(SelectedList);
+
+                    if (list != null)
+                    {
+                        if(actualChanges[index] == ListState.ADDED)
+                            redoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(index, list,ListState.ADDED_DELETE)); //push to undo stack
+                        else if (actualChanges[index] == ListState.EXIST_CHANGE)
+                            redoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(index, list, ListState.EXIST_DELETE));
+
+                            QuestionLists.RemoveAt(index);
+                            actualChanges.Remove(index);
+                    }
                 },
                 (obj) => QuestionLists.Count > 0));
             }
@@ -222,9 +271,17 @@ namespace ADDSCore.View.ACSQuestionListPageView
                             var result = dialogService.OpenDialog(dialog);
                             if (result != null)
                             {
+                                //Check added/exist
+                                if(actualChanges[index] == ListState.ADDED)
+                                    undoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(index, list, ListState.ADDED)); //Push previous version
+                                
+                                else if(actualChanges[index] == ListState.EXIST_CHANGE)
+                                    undoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(index, list, ListState.EXIST_CHANGE));
+
+                                //Bind new values
                                 QuestionLists[index] = result;
                                 SelectedList = result;
-                                if (!listChanges.ContainsKey(index)) listChanges.Add(index, ListState.EXIST_CHANGE);
+                                if (!actualChanges.ContainsKey(index)) actualChanges.Add(index, ListState.EXIST_CHANGE);
                             }
                         }
                     },
