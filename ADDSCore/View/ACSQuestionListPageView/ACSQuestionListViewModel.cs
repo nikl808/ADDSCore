@@ -15,7 +15,7 @@ using ADDSCore.Dialog.ACSEditDialog;
 
 namespace ADDSCore.View.ACSQuestionListPageView
 {
-    enum ListState {ADDED, ADDED_DELETE, EXIST_CHANGE, EXIST_DELETE }
+    enum ListState {ADDED, ADDED_CHANGE, ADDED_DELETE, EXIST_CHANGE, EXIST_DELETE }
     class ACSQuestionListViewModel:INotifyPropertyChanged
     {
 
@@ -24,7 +24,8 @@ namespace ADDSCore.View.ACSQuestionListPageView
         //display list to datagridview 
         public BindingList<AutomaSysQuestnaire> QuestionLists { get; set; }
 
-        private Dictionary<int, ListState> actualChanges;//rename to actualChanges
+        private Dictionary<int, ListState> actualChanges;
+        private Dictionary<int, AutomaSysQuestnaire> deletedObj;
         
         private Stack<Tuple<int, AutomaSysQuestnaire, ListState>> undoChanges;
         private Stack<Tuple<int, AutomaSysQuestnaire, ListState>> redoChanges;
@@ -45,6 +46,7 @@ namespace ADDSCore.View.ACSQuestionListPageView
         {
             dialogService = new DialogService();
             actualChanges = new Dictionary<int, ListState>();
+            deletedObj = new Dictionary<int, AutomaSysQuestnaire>();
             undoChanges = new Stack<Tuple<int, AutomaSysQuestnaire, ListState>>();
             redoChanges = new Stack<Tuple<int, AutomaSysQuestnaire, ListState>>();
 
@@ -101,17 +103,17 @@ namespace ADDSCore.View.ACSQuestionListPageView
                         foreach (var it in actualChanges)
                         {
                             //add new entry
-                            if (it.Value == ListState.ADDED)
+                            if (it.Value == ListState.ADDED || it.Value == ListState.ADDED_CHANGE)
                             {
                                 context.db.AutomaQuestnaire.Add(QuestionLists[it.Key]);
                                 context.db.SaveChanges();
                             }
                             //update exist entry
-                            else if(it.Value == ListState.EXIST_CHANGE)
+                            else if (it.Value == ListState.EXIST_CHANGE)
                             {
                                 var find = QuestionLists[it.Key].Id;
                                 var autoQuest = context.db.AutomaQuestnaire.Find(find);
-                                
+
                                 if (autoQuest != null)
                                 {
                                     autoQuest.ListName = QuestionLists[it.Key].ListName;
@@ -126,6 +128,13 @@ namespace ADDSCore.View.ACSQuestionListPageView
                                     autoQuest.Parameter = QuestionLists[it.Key].Parameter;
                                     context.db.SaveChanges();
                                 }
+                            }
+
+                            else if (it.Value == ListState.EXIST_DELETE)
+                            {
+                                var del = context.db.AutomaQuestnaire.Find(deletedObj[it.Key].Id);
+                                context.db.AutomaQuestnaire.Remove(del);
+                                context.db.SaveChanges();
                             }
                         }
                         actualChanges.Clear();
@@ -149,13 +158,27 @@ namespace ADDSCore.View.ACSQuestionListPageView
                         //push to redo stack
                         redoChanges.Push(currPop);
 
-                        if (currPop.Item3 == ListState.ADDED || currPop.Item3 == ListState.EXIST_CHANGE)
-                            QuestionLists[currPop.Item1] = currPop.Item2;
-
-                        else if (currPop.Item3 == ListState.ADDED_DELETE || currPop.Item3 == ListState.EXIST_DELETE)
+                        switch (currPop.Item3)
                         {
-                            QuestionLists.RemoveAt(currPop.Item1);
-                            actualChanges.Remove(currPop.Item1);
+                            case ListState.ADDED:
+                                QuestionLists.RemoveAt(currPop.Item1);
+                                actualChanges.Remove(currPop.Item1);
+                                break;
+                            case ListState.ADDED_CHANGE:
+                            case ListState.EXIST_CHANGE:
+                                QuestionLists[currPop.Item1] = currPop.Item2;
+                                break;
+                            case ListState.ADDED_DELETE:
+                                QuestionLists.Add(currPop.Item2);
+                                actualChanges.Add(QuestionLists.Count - 1, ListState.ADDED);
+                                break;
+                            case ListState.EXIST_DELETE:
+                                if(QuestionLists.Count-1 < currPop.Item1) //undo last item
+                                    QuestionLists.Add(deletedObj[currPop.Item1]);
+                                else //undo middle item
+                                    QuestionLists.Insert(currPop.Item1, currPop.Item2);
+                                deletedObj.Remove(currPop.Item1);
+                                break;
                         }
                     },
                     (obj) => undoChanges.Count > 0));
@@ -193,7 +216,11 @@ namespace ADDSCore.View.ACSQuestionListPageView
         {
             get
             {
-                return findCommand;
+                return findCommand ??
+                    (findCommand = new UICommand(obj =>
+                    {
+
+                    }));
             }
         }
 
@@ -209,15 +236,22 @@ namespace ADDSCore.View.ACSQuestionListPageView
                     AutomaSysQuestnaire list = obj as AutomaSysQuestnaire;
                     var index = QuestionLists.IndexOf(SelectedList);
 
-                    if (list != null)
+                    if (list != null) 
                     {
-                        if(actualChanges[index] == ListState.ADDED)
-                            redoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(index, list,ListState.ADDED_DELETE)); //push to undo stack
-                        else if (actualChanges[index] == ListState.EXIST_CHANGE)
-                            redoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(index, list, ListState.EXIST_DELETE));
+                        if(list.Id != 0)
+                        {
+                            undoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(list.Id-1, list, ListState.EXIST_DELETE));
+                            deletedObj.Add(list.Id-1,list);
+                            actualChanges.Add(list.Id - 1, ListState.EXIST_DELETE);
+                            QuestionLists.RemoveAt(index);
+                        }
 
+                        else
+                        {
+                            undoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(0, list, ListState.ADDED_DELETE));
                             QuestionLists.RemoveAt(index);
                             actualChanges.Remove(index);
+                        }
                     }
                 },
                 (obj) => QuestionLists.Count > 0));
@@ -271,17 +305,33 @@ namespace ADDSCore.View.ACSQuestionListPageView
                             var result = dialogService.OpenDialog(dialog);
                             if (result != null)
                             {
-                                //Check added/exist
-                                if(actualChanges[index] == ListState.ADDED)
-                                    undoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(index, list, ListState.ADDED)); //Push previous version
-                                
-                                else if(actualChanges[index] == ListState.EXIST_CHANGE)
+                                if (actualChanges.Count > 0)
+                                {
+                                    //Check added/exist
+                                    switch (actualChanges[index])
+                                    {
+                                        case ListState.ADDED:
+                                            undoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(index, list, ListState.ADDED_CHANGE)); 
+                                            actualChanges[index] = ListState.ADDED_CHANGE;
+                                            break;
+                                        case ListState.ADDED_CHANGE:
+                                            undoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(index, list, ListState.ADDED_CHANGE)); 
+                                            break;
+                                        case ListState.EXIST_CHANGE:
+                                            undoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(index, list, ListState.EXIST_CHANGE));
+                                            break;
+                                    }
+                                }
+
+                                else //first change to an exist item
+                                {
                                     undoChanges.Push(new Tuple<int, AutomaSysQuestnaire, ListState>(index, list, ListState.EXIST_CHANGE));
+                                    actualChanges.Add(index, ListState.EXIST_CHANGE);
+                                }
 
                                 //Bind new values
                                 QuestionLists[index] = result;
                                 SelectedList = result;
-                                if (!actualChanges.ContainsKey(index)) actualChanges.Add(index, ListState.EXIST_CHANGE);
                             }
                         }
                     },
