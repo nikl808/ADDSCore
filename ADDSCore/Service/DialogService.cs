@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace ADDSCore.Service
 {
@@ -14,6 +16,19 @@ namespace ADDSCore.Service
             };
             window.ShowDialog();
             return viewModel.DialogResult;
+        }
+    }
+
+    public class PrintDialogService:IPrintDialogService
+    {
+        public void OpenDialog(FlowDocument doc)
+        {
+            PrintDialog printDialog = new PrintDialog();
+            if(printDialog.ShowDialog() == true)
+            {
+                IDocumentPaginatorSource source = doc;
+                printDialog.PrintDocument(source.DocumentPaginator,"Test printing");
+            }
         }
     }
 }
