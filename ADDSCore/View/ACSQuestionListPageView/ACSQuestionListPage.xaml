@@ -16,7 +16,7 @@
                 Path=DetailsVisibility,
                 Converter={converters:VisibilityToBooleanConverter},Mode=TwoWay}" Margin="4"/>
         </DataTemplate>
-        
+
         <Style BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" TargetType="Button">
             <Setter Property="Width" Value="30"/>
             <Setter Property="Margin" Value="5,2,5,2"/>
@@ -40,7 +40,6 @@
                 </Button>
                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
                 <!--Undo button-->
-                <!--Add CommandParameter = "{Binding "Param"}-->
                 <Button x:Name="Undo" ToolTip="Отменить" Command="{Binding UndoCommand}" CommandParameter="{Binding SelectedList}">
                     <fa:ImageAwesome Icon="Solid_Undo" Width="20"/>
                 </Button>
@@ -74,15 +73,36 @@
                 </Button>
             </StackPanel>
         </ToolBar>
+        <TextBox x:Name="SearchBox"/>
 
         <TabControl Grid.Row="1" Margin="3,10">
             <TabItem Header="АСУ" FontSize="16">
                 <TabItem.Content>
                     <!--Main Datagrid-->
-                    <DataGrid x:Name="ACSMainDataGrid"  AutoGenerateColumns="False" EnableRowVirtualization="True" IsReadOnly="True"
+                    <DataGrid x:Name="ACSMainDataGrid" converters:DatagridTextSearch.SearchValue="{Binding ElementName=SearchBox, Path=Text, UpdateSourceTrigger=PropertyChanged}"  
+                              AutoGenerateColumns="False" EnableRowVirtualization="True" IsReadOnly="True"
                               ItemsSource="{Binding QuestionLists, Mode=TwoWay}"
                               SelectedItem="{Binding SelectedList}"
                               RowDetailsVisibilityMode="Collapsed">
+                        <DataGrid.Resources>
+                            <converters:SearchValueConverter x:Key="SearchValueConverter"/>
+                            <Style TargetType="{x:Type DataGridCell}">
+                                <Setter Property="converters:DatagridTextSearch.IsTextMatch">
+                                    <Setter.Value>
+                                        <MultiBinding Converter="{StaticResource SearchValueConverter}">
+                                            <Binding RelativeSource="{RelativeSource Self}" Path="Content.Text"/>
+                                            <Binding RelativeSource="{RelativeSource Self}" Path="(converters:DatagridTextSearch.SearchValue)"/>
+                                        </MultiBinding>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="converters:DatagridTextSearch.IsTextMatch" Value="True">
+                                        <Setter Property="Background" Value="Orange"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
+                        
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="" CellTemplate="{StaticResource ExpandDetails}" Width="30"/>
                             <DataGridTextColumn Binding="{Binding Path = ListName}" Header="Наименование" Width="*"/>
