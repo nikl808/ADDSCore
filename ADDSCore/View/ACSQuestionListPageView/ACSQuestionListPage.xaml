@@ -48,11 +48,6 @@
                     <fa:ImageAwesome Icon="Solid_Redo" Width="20"/>
                 </Button>
                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
-                <!--Find button-->
-                <Button x:Name="Find" ToolTip="Найти" Command="{Binding FindCommand}">
-                    <fa:ImageAwesome Icon="Solid_Search" Width="20"/>
-                </Button>
-                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
                 <!--Delete button-->
                 <Button x:Name="Delete" ToolTip="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedList}">
                     <fa:ImageAwesome Icon="Solid_Trash" Width="20"/>
@@ -73,36 +68,43 @@
                 </Button>
             </StackPanel>
         </ToolBar>
-        <TextBox x:Name="SearchBox"/>
+       
 
         <TabControl Grid.Row="1" Margin="3,10">
             <TabItem Header="АСУ" FontSize="16">
                 <TabItem.Content>
-                    <!--Main Datagrid-->
-                    <DataGrid x:Name="ACSMainDataGrid" converters:DatagridTextSearch.SearchValue="{Binding ElementName=SearchBox, Path=Text, UpdateSourceTrigger=PropertyChanged}"  
+                    <StackPanel>
+                        <!--Find textBox-->
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Найти: "/>
+                            <TextBox x:Name="SearchBox" Width="500"/>
+                        </StackPanel>
+                        <!--Main Datagrid-->
+                    <DataGrid x:Name="ACSMainDataGrid" 
                               AutoGenerateColumns="False" EnableRowVirtualization="True" IsReadOnly="True"
+                              converters:DatagridTextSearch.SearchValue="{Binding ElementName=SearchBox, Path=Text, UpdateSourceTrigger=PropertyChanged}"
                               ItemsSource="{Binding QuestionLists, Mode=TwoWay}"
                               SelectedItem="{Binding SelectedList}"
                               RowDetailsVisibilityMode="Collapsed">
                         <DataGrid.Resources>
-                            <converters:SearchValueConverter x:Key="SearchValueConverter"/>
+                            <converters:SearchValueConverter x:Key="SearchValueConverter" />
                             <Style TargetType="{x:Type DataGridCell}">
                                 <Setter Property="converters:DatagridTextSearch.IsTextMatch">
                                     <Setter.Value>
                                         <MultiBinding Converter="{StaticResource SearchValueConverter}">
-                                            <Binding RelativeSource="{RelativeSource Self}" Path="Content.Text"/>
-                                            <Binding RelativeSource="{RelativeSource Self}" Path="(converters:DatagridTextSearch.SearchValue)"/>
+                                            <Binding RelativeSource="{RelativeSource Self}" Path="Content.Text" />
+                                            <Binding RelativeSource="{RelativeSource Self}" Path="(converters:DatagridTextSearch.SearchValue)" />
                                         </MultiBinding>
                                     </Setter.Value>
                                 </Setter>
                                 <Style.Triggers>
                                     <Trigger Property="converters:DatagridTextSearch.IsTextMatch" Value="True">
-                                        <Setter Property="Background" Value="Orange"/>
+                                        <Setter Property="Background" Value="Lime" />
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
                         </DataGrid.Resources>
-                        
+
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="" CellTemplate="{StaticResource ExpandDetails}" Width="30"/>
                             <DataGridTextColumn Binding="{Binding Path = ListName}" Header="Наименование" Width="*"/>
@@ -149,6 +151,7 @@
                             </DataTemplate>
                         </DataGrid.RowDetailsTemplate>
                     </DataGrid>
+                    </StackPanel>
                 </TabItem.Content>
             </TabItem>
         </TabControl>

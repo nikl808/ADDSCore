@@ -5,6 +5,7 @@
              xmlns:ACSEdit ="clr-namespace:ADDSCore.Dialog.ACSEditDialog"
              xmlns:ACSEditHw ="clr-namespace:ADDSCore.Dialog.ACSEditHwDialog"
              xmlns:ACSEditParam ="clr-namespace:ADDSCore.Dialog.ACSEditParamDialog"
+             xmlns:Email ="clr-namespace:ADDSCore.Dialog.EmailDialog"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <DataTemplate DataType="{x:Type ACSEdit:ACSQuestEditMainViewModel}">
@@ -16,5 +17,8 @@
         <DataTemplate DataType="{x:Type ACSEditParam:ACSEditParamViewModel}">
             <ACSEditParam:ACSEditParamDialog/>
         </DataTemplate>
+         <DataTemplate DataType="{x:Type Email:SendEmailViewModel}">
+             <Email:SendEmailDialog/>
+         </DataTemplate>
     </Application.Resources>
 </Application>

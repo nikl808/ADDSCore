@@ -40,7 +40,7 @@ namespace ADDSCore.View.ACSQuestionListPageView
                 OnPropertyChanged("SelectedList");
             }
         }
-        
+
         public ACSQuestionListViewModel()
         {
             dialogService = new DialogService();
@@ -248,21 +248,6 @@ namespace ADDSCore.View.ACSQuestionListPageView
                         }
                     },
                     (obj) => redoChanges.Count > 0));
-            }
-        }
-
-        //Find database entry
-        private UICommand findCommand;
-        public UICommand FindCommand
-        {
-            get
-            {
-                return findCommand ??
-                    (findCommand = new UICommand(obj =>
-                    {
-                       
-                    },
-                    (obj) => QuestionLists.Count > 0));
             }
         }
 
