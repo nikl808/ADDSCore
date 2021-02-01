@@ -1,0 +1,4 @@
+﻿namespace ADDSCore.ViewModels.Business.Enums
+{
+    enum ListState { ADDED_FIRST, ADDED_CHANGE, ADDED_DELETE, EXIST_FIRST_CHANGE, EXIST_CHANGE, EXIST_DELETE }
+}
