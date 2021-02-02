@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-namespace ADDSCore.Service
+namespace ADDSCore.Services
 {
     public class DialogService:IDialogService
     {
@@ -22,6 +22,7 @@ namespace ADDSCore.Service
         public void OpenDialog(FlowDocument doc)
         {
             PrintDialog printDialog = new PrintDialog();
+            
             if(printDialog.ShowDialog() == true)
             {
                 IDocumentPaginatorSource source = doc;

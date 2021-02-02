@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ADDSCore.Service
+namespace ADDSCore.Services
 {
     public interface IDialogWindow
     {

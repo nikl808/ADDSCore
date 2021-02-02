@@ -13,7 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ADDSCore.Extensions\ADDSCore.Extensions.csproj" />
     <ProjectReference Include="..\ADDSCore.Models\ADDSCore.Models.csproj" />
+    <ProjectReference Include="..\ADDSCore.Services\ADDSCore.Services.csproj" />
   </ItemGroup>
 
 </Project>

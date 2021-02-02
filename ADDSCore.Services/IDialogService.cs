@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Documents;
 
-namespace ADDSCore.Service
+namespace ADDSCore.Services
 {
     public interface IDialogService
     {

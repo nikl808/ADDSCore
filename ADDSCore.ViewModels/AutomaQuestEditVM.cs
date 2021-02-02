@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
-using ADDSCore.Service;
+using ADDSCore.Services;
 using ADDSCore.ViewModels.Command;
 using ADDSCore.Models.Business;
 

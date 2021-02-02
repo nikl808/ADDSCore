@@ -9,17 +9,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.ADDSCore.ViewModels", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.Converters", "ADDSCore.Converters\ADDSCore.Converters.csproj", "{DF2C9B8F-F664-469B-85DC-CA7C35A0265E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADDSCore.ViewModels", "ADDSCore.ViewModels\ADDSCore.ViewModels.csproj", "{9284705D-B9DA-4070-9D5E-E18C9511628F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.ViewModels", "ADDSCore.ViewModels\ADDSCore.ViewModels.csproj", "{9284705D-B9DA-4070-9D5E-E18C9511628F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADDSCore.Models", "ADDSCore.Models\ADDSCore.Models.csproj", "{76E7F546-2EA6-4F8E-82CA-0618FEB82AAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.Models", "ADDSCore.Models\ADDSCore.Models.csproj", "{76E7F546-2EA6-4F8E-82CA-0618FEB82AAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADDSCore.Extensions", "ADDSCore.Extensions\ADDSCore.Extensions.csproj", "{7DC0DB6E-90DB-4D35-B7CA-F7E8DFCE4E16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.Extensions", "ADDSCore.Extensions\ADDSCore.Extensions.csproj", "{7DC0DB6E-90DB-4D35-B7CA-F7E8DFCE4E16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADDSCore.Views", "ADDSCore.Views\ADDSCore.Views.csproj", "{2F6D1A0E-24F8-45B5-A9AD-5BF64908EE9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.Views", "ADDSCore.Views\ADDSCore.Views.csproj", "{2F6D1A0E-24F8-45B5-A9AD-5BF64908EE9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADDSCore.Services", "ADDSCore.Services\ADDSCore.Services.csproj", "{B992BFD0-9C75-40BB-8026-2BF10C3B36B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.Services", "ADDSCore.Services\ADDSCore.Services.csproj", "{B992BFD0-9C75-40BB-8026-2BF10C3B36B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADDSCore.DataProviders", "ADDSCoreDataProviders\ADDSCore.DataProviders.csproj", "{31F8A7AD-4CFC-43FC-A584-F466F2A9B219}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.DataProviders", "ADDSCoreDataProviders\ADDSCore.DataProviders.csproj", "{31F8A7AD-4CFC-43FC-A584-F466F2A9B219}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.ADDSCore.Document", "Test.ADDSCore.Document\Test.ADDSCore.Document.csproj", "{D59DD51F-52BE-4661-908D-209A0B6884CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{31F8A7AD-4CFC-43FC-A584-F466F2A9B219}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31F8A7AD-4CFC-43FC-A584-F466F2A9B219}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31F8A7AD-4CFC-43FC-A584-F466F2A9B219}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D59DD51F-52BE-4661-908D-209A0B6884CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D59DD51F-52BE-4661-908D-209A0B6884CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D59DD51F-52BE-4661-908D-209A0B6884CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D59DD51F-52BE-4661-908D-209A0B6884CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

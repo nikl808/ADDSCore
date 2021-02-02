@@ -15,17 +15,19 @@ using Thm15 = DocumentFormat.OpenXml.Office2013.Theme;
 
 namespace ADDSCore.Models.Business
 {
-    class AutomaSysDocTemplate
+    public class AutomaSysDocTemplate
     {
-        private Dictionary<string, string[]> dict;
+        private AutomaSysQuestnaire line;
+        private Body docBody;
 
         #region Create document
-        public void CreatePackage(string filePath, Dictionary<string, string[]> inData)
+        public void CreatePackage(AutomaSysQuestnaire line)
         {
-            dict = inData;
+            this.line = line;
+            
             try
             {
-                using (WordprocessingDocument package = WordprocessingDocument.Create(filePath, WordprocessingDocumentType.Document))
+                using (WordprocessingDocument package = WordprocessingDocument.Create(@"C:\output.docx", WordprocessingDocumentType.Document))
                 {
                     CreateParts(package);
                 }
@@ -198,49 +200,37 @@ namespace ADDSCore.Models.Business
             document1.AddNamespaceDeclaration("wne", "http://schemas.microsoft.com/office/word/2006/wordml");
             document1.AddNamespaceDeclaration("wps", "http://schemas.microsoft.com/office/word/2010/wordprocessingShape");
 
-            Body body1 = new Body();
+            docBody = new Body();
 
-            createParagraph(body1, "Опросный лист АСУ", true, "24", false, false, null, new Justification { Val = JustificationValues.Center });
-            createParagraph(body1, "Наименование: " + dict["Наименование"][0], false, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-            createParagraph(body1, "Объект управления: " + dict["Объект управления"][0], false, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-            createParagraph(body1, "Структура АСУ", true, "24", false, true, new ParagraphStyleId() { Val = "a3" }, null, new Indentation() { Start = "0", FirstLine = "283" });
+            createParagraph(paragText:"Опросный лист АСУ", bold:true, fontSize:"28", justification:new Justification { Val = JustificationValues.Center });
+            createParagraph("Наименование: " + line.ListName);
+            createParagraph("Объект управления: " + line.ObjName);
+            createParagraph(paragText:"Структура АСУ", bold:true, numering:true, paragraphStyleId:new ParagraphStyleId() { Val = "a3" });
 
-            createParagraph(body1, "Функции локальной автоматизированной системой управления (АСУ): " + dict["Функции АСУ"][0], false, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-            createParagraph(body1, "Аналог объекта управления: " + dict["Аналог объекта управления"][0], false, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
+            //add ACS function here                            
+            createParagraph("Функции локальной автоматизированной системой управления (АСУ): ");
+            
+            createParagraph("Аналог объекта управления: " + line.ControlAnalog);
+            createParagraph("Структура АСУ: " + line.ControlStruct);
+            createParagraph(paragText:"Программный состав пультов и шкафов управления", bold:true, numering:true, paragraphStyleId:new ParagraphStyleId() { Val = "a3" });
+            createParagraph(paragText:"Таблица 1 – перечень контролируемых параметров",  justification:new Justification() { Val = JustificationValues.Right });
+            createParamTable();
+            createParagraph();
+            createParagraph(paragText:"Состав шкафов и пультов АСУ", bold:true, numering:true);
+            createParagraph("В состав локальной АСУ входят:");
 
-            for (int i = 0; i < dict["Структура ЛАСУ"].Length; i++)
-                createParagraph(body1, dict["Структура ЛАСУ"][i], false, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-
-            createParagraph(body1, "Программный состав пультов и шкафов управления", true, "24", false, true, new ParagraphStyleId() { Val = "a3" }, null, new Indentation() { Start = "0", FirstLine = "283" });
-            createParagraph(body1, "Таблица 1 – перечень контролируемых параметров", false, "24", false, false, null, new Justification() { Val = JustificationValues.Right });
-            createParamTable(body1, "Контроллируемые параметры");
-            createParagraph(body1, "", false, "0", false, false);
-            createParagraph(body1, "Состав шкафов и пультов АСУ", true, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-            createParagraph(body1, "В состав локальной АСУ входят:", false, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-
-            var iter = 6;
-            while (iter <= dict["Оборудование"].Length)
-            {
-                if (dict["Оборудование"][iter] != "")
-                    createParagraph(body1, dict["Оборудование"][iter].Substring(dict["Оборудование"][iter].IndexOf(':') + 1),
-                        false, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-                iter += 7;
-            }
-
-            createParagraph(body1, "Таблица 2 – Краткие технические характеристики", false, "24", false, false, null, new Justification() { Val = JustificationValues.Right });
-            createHwTable(body1, "Оборудование");
-            createParagraph(body1, "", false, "0", false, false);
-            createParagraph(body1, "Сетевой протокол: ", true, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-            createParagraph(body1, dict["Сетевая организация"][0], false, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-            createParagraph(body1, "Описание программного обеспечения", true, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-            createParagraph(body1, dict["ПО"][0], false, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-            createParagraph(body1, "Комплектность документации", true, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-
-            for (int i = 0; i < dict["Документация"].Length; i++)
-                createParagraph(body1, dict["Документация"][i], false, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-
-            createParagraph(body1, "Дополнительная информация", true, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
-            createParagraph(body1, dict["Дополнительно"][0], false, "24", false, false, null, null, new Indentation() { Start = "0", FirstLine = "283" });
+            foreach (var it in line.Cabinet) createParagraph(paragText: it.Composition);
+                        
+            createParagraph(paragText:"Таблица 2 – Краткие технические характеристики", justification:new Justification() { Val = JustificationValues.Right });
+            createHwTable();
+            createParagraph();
+            createParagraph(paragText:"Сетевой протокол: " + line.Network, bold:true);
+            createParagraph(paragText:"Описание программного обеспечения", bold:true);
+            createParagraph(line.Software);
+            createParagraph(paragText:"Комплектность документации", bold:true, numering:true);
+            createParagraph(line.Document);                        
+            createParagraph(paragText:"Дополнительная информация", bold:true,numering:true);
+            createParagraph(line.Extra);
 
             SectionProperties sectionProperties1 = new SectionProperties() { RsidRPr = "004A1649", RsidR = "004A1649" };
             PageSize pageSize1 = new PageSize() { Width = (UInt32Value)11906U, Height = (UInt32Value)16838U };
@@ -253,9 +243,9 @@ namespace ADDSCore.Models.Business
             sectionProperties1.Append(columns1);
             sectionProperties1.Append(docGrid1);
 
-            body1.Append(sectionProperties1);
+            docBody.Append(sectionProperties1);
 
-            document1.Append(body1);
+            document1.Append(docBody);
 
             mainDocumentPart1.Document = document1;
         }
@@ -2486,17 +2476,11 @@ namespace ADDSCore.Models.Business
         #endregion
 
         #region create param table
-        private void createParamTable(Body body, string key)
+        private void createParamTable()
         {
-            Dictionary<string, List<string>> data = null;//dict refactor(delete first key)
-
-            //Create text
-            if (dict.ContainsKey(key) & key.Equals("Контроллируемые параметры"))
-                data = CreateParamTableText(dict[key]);//method refactor
-
             //columns width properties
             var gridWidth1 = "3397";
-            var gridWidth2 = "5948";
+            var gridWidth2 = "5500";
 
             //Create empty table
             Table table = new Table();
@@ -2530,26 +2514,23 @@ namespace ADDSCore.Models.Business
 
             //Fill table cells
             List<TableRow> tablerows = null;
-            if (data != null)
+            
+            tablerows = new List<TableRow>();
+            foreach (var it in line.Parameter)
             {
-                tablerows = new List<TableRow>();
-                foreach (KeyValuePair<string, List<string>> it in data)
-                {
-                    if (it.Key != "")
-                    {
-                        TableRow row = new TableRow();
-                        AddTableCell(row, gridWidth1, it.Key, false, TableVerticalAlignmentValues.Center, JustificationValues.Center);
-                        AddTableCell(row, gridWidth2, it.Value[1], false);
-                        tablerows.Add(row);
+                var row = new TableRow();
+                var words = it.Parameter.Split(new char[] { '\n', ' ' , ',' , ';'});
 
-                        for (int i = 2; i <= it.Value.Count - 1; i++)
-                        {
-                            TableRow row1 = new TableRow();
-                            AddTableSplittedCell(row1, gridWidth1);
-                            AddTableCell(row1, gridWidth2, it.Value[i], false);
-                            tablerows.Add(row1);
-                        }
-                    }
+                AddTableCell(row, gridWidth1, it.ControlHwName, false, TableVerticalAlignmentValues.Center, JustificationValues.Center);
+                AddTableCell(row, gridWidth2, words[0], false, TableVerticalAlignmentValues.Center, JustificationValues.Center);
+                tablerows.Add(row);
+                
+                for (int i = 1; i<words.Length; i++)
+                {
+                    var row2 = new TableRow();
+                    AddTableSplittedCell(row2, gridWidth1);
+                    AddTableCell(row2, gridWidth2, words[i], false, TableVerticalAlignmentValues.Center, JustificationValues.Center);
+                    tablerows.Add(row2);
                 }
             }
 
@@ -2559,19 +2540,13 @@ namespace ADDSCore.Models.Business
 
             for (int i = 0; i <= tablerows.Count - 1; i++)
                 table.Append(tablerows[i]);
-            body.AppendChild(table);
+            docBody.AppendChild(table);
         }
         #endregion
 
         #region create hardware table
-        private void createHwTable(Body body, string key)
+        private void createHwTable()
         {
-            Dictionary<string, List<string>> data = null;
-
-            //Create text
-            if (dict.ContainsKey(key) & key.Equals("Оборудование"))
-                data = CreateHwTableText(dict[key], "Шкаф");//method refactor
-
             //columns width properties
             var gridWidth = "2689";
             var gridWidth2 = "689";
@@ -2601,7 +2576,7 @@ namespace ADDSCore.Models.Business
             TableRow firRow = new TableRow();
             TableRow secRow = new TableRow();
             TableRow thiRow = new TableRow();
-            TableRow foRow = new TableRow();
+            TableRow forthRow = new TableRow();
             TableRow fifRow = new TableRow();
             TableRow sixRow = new TableRow();
 
@@ -2609,23 +2584,23 @@ namespace ADDSCore.Models.Business
                 new Shading() { Val = ShadingPatternValues.Clear, Color = "auto", Fill = "D0CECE", ThemeFill = ThemeColorValues.Background2, ThemeFillShade = "E6" });
             AddTableCell(secRow, gridWidth, "Напряжение питания", false);
             AddTableCell(thiRow, gridWidth, "Номинальная частота сети", false);
-            AddTableCell(foRow, gridWidth, "Оперативное напряжение цепи управления", false);
+            AddTableCell(forthRow, gridWidth, "Операт. напряж. цепи управления", false);
             AddTableCell(fifRow, gridWidth, "Степень защиты", false);
-            AddTableCell(sixRow, gridWidth, "Климатическое исполнение и категория размещения", false);
+            AddTableCell(sixRow, gridWidth, "Климат. исполн. и категория размещения", false);
 
 
             //Fill table cells
-            foreach (KeyValuePair<string, List<string>> it in data)
+            foreach (var it in line.Cabinet)
             {
                 //fill header
-                AddTableCell(firRow, gridWidth2, it.Key, true, TableVerticalAlignmentValues.Center, JustificationValues.Center,
+                AddTableCell(firRow, gridWidth2, it.Name, true, TableVerticalAlignmentValues.Center, JustificationValues.Center,
                     new Shading() { Val = ShadingPatternValues.Clear, Color = "auto", Fill = "D0CECE", ThemeFill = ThemeColorValues.Background2, ThemeFillShade = "E6" });
                 //fill other rows
-                AddTableCell(secRow, gridWidth2, it.Value[0].Substring(it.Value[0].IndexOf(':') + 1), false);
-                AddTableCell(thiRow, gridWidth2, it.Value[1].Substring(it.Value[1].IndexOf(':') + 1), false);
-                AddTableCell(foRow, gridWidth2, it.Value[2].Substring(it.Value[2].IndexOf(':') + 1), false);
-                AddTableCell(fifRow, gridWidth2, it.Value[3].Substring(it.Value[3].IndexOf(':') + 1), false);
-                AddTableCell(sixRow, gridWidth2, it.Value[4].Substring(it.Value[4].IndexOf(':') + 1), false);
+                AddTableCell(secRow, gridWidth2, it.SuppVoltage, false);
+                AddTableCell(thiRow, gridWidth2, it.RatedFreq, false);
+                AddTableCell(forthRow, gridWidth2, it.OperatVoltage, false);
+                AddTableCell(fifRow, gridWidth2, it.ProtectLevel, false);
+                AddTableCell(sixRow, gridWidth2, it.Climate, false);
             }
 
             table.Append(tableProperties);
@@ -2633,11 +2608,11 @@ namespace ADDSCore.Models.Business
             table.Append(firRow);
             table.Append(secRow);
             table.Append(thiRow);
-            table.Append(foRow);
+            table.Append(forthRow);
             table.Append(fifRow);
             table.Append(sixRow);
 
-            body.AppendChild(table);
+            docBody.AppendChild(table);
         }
         #endregion
 
@@ -2724,76 +2699,16 @@ namespace ADDSCore.Models.Business
         }
         #endregion
 
-        #region create parameter table text
-        public Dictionary<string, List<string>> CreateParamTableText(string[] str)
-        {
-            Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
-
-            var iter = 0;
-
-            while (iter < str.Length)
-            {
-                if (str[iter] != "")
-                {
-                    //Get the second key
-                    var secondKey = str[iter].Substring(str[iter].IndexOf(':') + 1);
-
-                    dict.Add(secondKey, new List<string>());
-                    dict[secondKey].Add(str[iter + 1].Substring(0, str[iter + 1].IndexOf(':')));
-                    iter = iter + 2;
-
-                    //loop to next first key
-                    while (str[iter] != "" && str[iter].IndexOf(':') <= 0)
-                    {
-                        dict[secondKey].Add(str[iter]);
-                        iter++;
-                    }
-                }
-                if (str[iter] == "") iter++;
-            }
-            return dict;
-        }
-        #endregion
-
-        #region create hardware table text
-        public Dictionary<string, List<string>> CreateHwTableText(string[] str, string key)
-        {
-            Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
-
-            var iter = 0;
-
-            while (iter < str.Length)
-            {
-                if (str[iter] != "")
-                {
-                    //Get the second key
-                    var secondKey = str[iter].Substring(str[iter].IndexOf(':') + 1);
-
-                    if (str[iter].Substring(0, str[iter].IndexOf(':')).Equals(key))
-                    {
-                        dict.Add(secondKey, new List<string>());
-                        iter++;
-                        //loop to next first key
-                        while (str[iter] != "" && !str[iter].Substring(0, str[iter].IndexOf(':')).Equals(key))
-                        {
-                            dict[secondKey].Add(str[iter]);
-                            iter++;
-                        }
-                    }
-                }
-                if (str[iter] == "") iter++;
-            }
-            return dict;
-        }
-        #endregion
-
         #region create paragraph
-        private void createParagraph(Body body, string paragText, bool bold, string fontSize, bool shaded, bool numering,
-            ParagraphStyleId paragraphStyleId = null,
-            Justification justification = null,
-            Indentation indendation = null)
+        private void createParagraph( string paragText = "", 
+                                      bool bold = false, 
+                                      string fontSize = "24", 
+                                      bool shaded = false, 
+                                      bool numering = false,
+                                      ParagraphStyleId paragraphStyleId = null,
+                                      Justification justification = null)
         {
-            Paragraph paragraph = body.AppendChild(new Paragraph());
+            Paragraph paragraph = docBody.AppendChild(new Paragraph());
 
             ParagraphProperties paragraphProperties = new ParagraphProperties();
 
@@ -2811,7 +2726,7 @@ namespace ADDSCore.Models.Business
 
             if (paragraphStyleId != null) paragraphProperties.Append(paragraphStyleId);
             if (justification != null) paragraphProperties.Append(justification);
-            if (indendation != null) paragraphProperties.Append(indendation);
+            else paragraphProperties.Append(new Indentation() { Start = "0", FirstLine = "283" });
 
             paragraphProperties.Append(paragraphMarkRunProperties);
 
