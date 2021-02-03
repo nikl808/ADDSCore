@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.Services", "ADDSCo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.DataProviders", "ADDSCoreDataProviders\ADDSCore.DataProviders.csproj", "{31F8A7AD-4CFC-43FC-A584-F466F2A9B219}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.ADDSCore.Document", "Test.ADDSCore.Document\Test.ADDSCore.Document.csproj", "{D59DD51F-52BE-4661-908D-209A0B6884CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.ADDSCore.Document", "Test.ADDSCore.Document\Test.ADDSCore.Document.csproj", "{D59DD51F-52BE-4661-908D-209A0B6884CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.ADDSCore.Repositories", "Test.ADDSCore.Repositories\Test.ADDSCore.Repositories.csproj", "{CE35D624-A742-4BBC-A28B-71492ACF4D15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{D59DD51F-52BE-4661-908D-209A0B6884CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D59DD51F-52BE-4661-908D-209A0B6884CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D59DD51F-52BE-4661-908D-209A0B6884CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE35D624-A742-4BBC-A28B-71492ACF4D15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE35D624-A742-4BBC-A28B-71492ACF4D15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE35D624-A742-4BBC-A28B-71492ACF4D15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE35D624-A742-4BBC-A28B-71492ACF4D15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
