@@ -16,18 +16,4 @@ namespace ADDSCore.Services
             return viewModel.DialogResult;
         }
     }
-
-    public class PrintDialogService:IPrintDialogService
-    {
-        public void OpenDialog(FlowDocument doc)
-        {
-            PrintDialog printDialog = new PrintDialog();
-            
-            if(printDialog.ShowDialog() == true)
-            {
-                IDocumentPaginatorSource source = doc;
-                printDialog.PrintDocument(source.DocumentPaginator,"Test printing");
-            }
-        }
-    }
 }

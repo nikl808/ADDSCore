@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace ADDSCore.DataProviders
 {
     interface IRepository<T>:IDisposable
     {
-        Task<IEnumerable<T>> GetEntitiesListAsync();
+        BindingList<T> GetEntitiesList();
         T GetEntity(int id);
         void Create(T entity);
-        void Update(int id, T entity);
-        void Delete(int id);
+        void Update(T entity);
+        void Delete(T entity);
         void Save();
     }
 }

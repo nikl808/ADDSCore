@@ -22,11 +22,12 @@
             <Setter Property="Width" Value="30"/>
             <Setter Property="Margin" Value="5,2,5,2"/>
         </Style>
+        <BooleanToVisibilityConverter x:Key="BoolToVisible"/>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
-            <RowDefinition/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
         <ToolBar Grid.Row="0">
@@ -54,9 +55,9 @@
                     <fa:ImageAwesome Icon="Solid_Trash" Width="20"/>
                 </Button>
                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
-                <!--Print button-->
-                <Button Name="Print" ToolTip="Печать" Margin="5,2" Command="{Binding PrintCommand}" CommandParameter="{Binding SelectedList}">
-                    <fa:ImageAwesome Icon="Solid_Print" Width="20"/>
+                <!--Export button-->
+                <Button Name="Export" ToolTip="Экспорт в Word" Margin="5,2" Command="{Binding ExportCommand}" CommandParameter="{Binding SelectedList}">
+                    <fa:ImageAwesome Icon="Solid_FileWord" Width="20"/>
                 </Button>
                 <!--Send email button-->
                 <Button Name="Mail" ToolTip="Отправить" Margin="5,2" Command="{Binding SendMessCommand}" CommandParameter="{Binding SelectedList}">
@@ -69,8 +70,7 @@
                 </Button>
             </StackPanel>
         </ToolBar>
-
-
+               
         <TabControl Grid.Row="1" Margin="3,10">
             <TabItem Header="АСУ" FontSize="16">
                 <TabItem.Content>

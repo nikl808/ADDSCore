@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ADDSCore.Services\ADDSCore.Services.csproj" />
     <ProjectReference Include="..\ADDSCoreDataProviders\ADDSCore.DataProviders.csproj" />
   </ItemGroup>
 

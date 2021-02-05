@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.ViewModels", "ADDS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.Models", "ADDSCore.Models\ADDSCore.Models.csproj", "{76E7F546-2EA6-4F8E-82CA-0618FEB82AAF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.Extensions", "ADDSCore.Extensions\ADDSCore.Extensions.csproj", "{7DC0DB6E-90DB-4D35-B7CA-F7E8DFCE4E16}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.Views", "ADDSCore.Views\ADDSCore.Views.csproj", "{2F6D1A0E-24F8-45B5-A9AD-5BF64908EE9F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.Services", "ADDSCore.Services\ADDSCore.Services.csproj", "{B992BFD0-9C75-40BB-8026-2BF10C3B36B0}"
@@ -23,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADDSCore.DataProviders", "A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.ADDSCore.Document", "Test.ADDSCore.Document\Test.ADDSCore.Document.csproj", "{D59DD51F-52BE-4661-908D-209A0B6884CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.ADDSCore.Repositories", "Test.ADDSCore.Repositories\Test.ADDSCore.Repositories.csproj", "{CE35D624-A742-4BBC-A28B-71492ACF4D15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.ADDSCore.Repositories", "Test.ADDSCore.Repositories\Test.ADDSCore.Repositories.csproj", "{CE35D624-A742-4BBC-A28B-71492ACF4D15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,10 +49,6 @@ Global
 		{76E7F546-2EA6-4F8E-82CA-0618FEB82AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76E7F546-2EA6-4F8E-82CA-0618FEB82AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76E7F546-2EA6-4F8E-82CA-0618FEB82AAF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7DC0DB6E-90DB-4D35-B7CA-F7E8DFCE4E16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7DC0DB6E-90DB-4D35-B7CA-F7E8DFCE4E16}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7DC0DB6E-90DB-4D35-B7CA-F7E8DFCE4E16}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7DC0DB6E-90DB-4D35-B7CA-F7E8DFCE4E16}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F6D1A0E-24F8-45B5-A9AD-5BF64908EE9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2F6D1A0E-24F8-45B5-A9AD-5BF64908EE9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F6D1A0E-24F8-45B5-A9AD-5BF64908EE9F}.Release|Any CPU.ActiveCfg = Release|Any CPU

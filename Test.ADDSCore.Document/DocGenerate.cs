@@ -1,8 +1,6 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using ADDSCore.Models.Business;
-using ADDSCore.Services;
-using ADDSCore.Extensions;
 using System.Windows.Documents;
 
 namespace Test.ADDSCore.Document
@@ -49,16 +47,6 @@ namespace Test.ADDSCore.Document
         {
             AutomaSysDocTemplate doc = new AutomaSysDocTemplate();
             doc.CreatePackage(testObj);
-        }
-
-        [Test]
-        public void PrintDocument()
-        {
-            FlowDocument doc = new FlowDocument();
-            var printDialog = new PrintDialogService();
-            doc.LoadWordML(@"C:\output.docx");
-
-            printDialog.OpenDialog(doc);
         }
     }
 }

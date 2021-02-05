@@ -9,9 +9,4 @@ namespace ADDSCore.Services
     {
         public T OpenDialog<T>(DialogViewBaseModel<T> viewModel) where T : class;
     }
-
-    public interface IPrintDialogService
-    {
-        public void OpenDialog(FlowDocument doc);
-    }
 }
