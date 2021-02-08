@@ -1,25 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FontAwesome5" Version="2.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Images\" />
-    <Folder Include="Resources\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\ADDSCore.Converters\ADDSCore.Converters.csproj" />
+    <ProjectReference Include="..\ADDSCore.Services\ADDSCore.Services.csproj" />
     <ProjectReference Include="..\ADDSCore.ViewModels\ADDSCore.ViewModels.csproj" />
-    <ProjectReference Include="..\ADDSCore.Views\ADDSCore.Views.csproj" />
   </ItemGroup>
 
 </Project>

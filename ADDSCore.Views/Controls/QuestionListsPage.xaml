@@ -1,0 +1,156 @@
+﻿<Page x:Class="ADDSCore.Views.Controls.QuestionListsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ADDSCore.Views.Controls"
+      xmlns:converters="clr-namespace:ADDSCore.Converters;assembly=ADDSCore.Converters"
+      xmlns:gridSearch="clr-namespace:ADDSCore.Views.Attached"
+      xmlns:fa="http://schemas.fontawesome.com/icons/"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="QuestionListsPage">
+    <Page.Resources>
+        <DataTemplate x:Key="ExpandDetails">
+            <ToggleButton Name="ShowDetails" 
+                          IsChecked="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, 
+                Path=DetailsVisibility,
+                Converter={converters:VisibilityToBooleanConverter},Mode=TwoWay}" Margin="4"/>
+        </DataTemplate>
+
+        <Style BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" TargetType="Button">
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Margin" Value="5,2,5,2"/>
+        </Style>
+        <BooleanToVisibilityConverter x:Key="BoolToVisible"/>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <ToolBar Grid.Row="0">
+            <StackPanel Orientation="Horizontal">
+                <!--Add button-->
+                <Button x:Name="Add" ToolTip="Добавить новый опросный лист" Command="{Binding AddCommand}">
+                    <fa:ImageAwesome Icon="Solid_Plus" Width="20"/>
+                </Button>
+                <!--Save button-->
+                <Button x:Name="Save" ToolTip="Сохранить изменения в БД" Command="{Binding SaveCommand}">
+                    <fa:ImageAwesome Icon="Solid_Save" Width="20"/>
+                </Button>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
+                <!--Undo button-->
+                <Button x:Name="Undo" ToolTip="Отменить" Command="{Binding UndoCommand}" CommandParameter="{Binding SelectedList}">
+                    <fa:ImageAwesome Icon="Solid_Undo" Width="20"/>
+                </Button>
+                <!--Redo button-->
+                <Button x:Name="Redo" ToolTip="Вернуть" Command="{Binding RedoCommand}" CommandParameter="{Binding SelectedList}">
+                    <fa:ImageAwesome Icon="Solid_Redo" Width="20"/>
+                </Button>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
+                <!--Delete button-->
+                <Button x:Name="Delete" ToolTip="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedList}">
+                    <fa:ImageAwesome Icon="Solid_Trash" Width="20"/>
+                </Button>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
+                <!--Export button-->
+                <Button Name="Export" ToolTip="Экспорт в Word" Margin="5,2" Command="{Binding ExportCommand}" CommandParameter="{Binding SelectedList}">
+                    <fa:ImageAwesome Icon="Solid_FileWord" Width="20"/>
+                </Button>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
+                <!--Open edit window button-->
+                <Button x:Name="Link" ToolTip="Открыть" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedList}">
+                    <fa:ImageAwesome Icon="Solid_ExternalLinkAlt" Width="20"/>
+                </Button>
+            </StackPanel>
+        </ToolBar>
+               
+        <TabControl Grid.Row="1" Margin="3,10">
+            <TabItem Header="АСУ" FontSize="16">
+                <TabItem.Content>
+                    <StackPanel>
+                        <!--Find textBox-->
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Найти: "/>
+                            <TextBox x:Name="SearchBox" Width="500"/>
+                        </StackPanel>
+                        <!--Main Datagrid-->
+                        <DataGrid x:Name="ACSMainDataGrid" 
+                              AutoGenerateColumns="False" EnableRowVirtualization="True" IsReadOnly="True"
+                              gridSearch:DatagridTextSearch.SearchValue="{Binding ElementName=SearchBox, Path=Text, UpdateSourceTrigger=PropertyChanged}"
+                              ItemsSource="{Binding QuestionLists, Mode=TwoWay}"
+                              SelectedItem="{Binding SelectedList}"
+                              RowDetailsVisibilityMode="Collapsed">
+                            <DataGrid.Resources>
+                                <gridSearch:SearchValueConverter x:Key="SearchValueConverter" />
+                                <Style TargetType="{x:Type DataGridCell}">
+                                    <Setter Property="gridSearch:DatagridTextSearch.IsTextMatch">
+                                        <Setter.Value>
+                                            <MultiBinding Converter="{StaticResource SearchValueConverter}">
+                                                <Binding RelativeSource="{RelativeSource Self}" Path="Content.Text" />
+                                                <Binding RelativeSource="{RelativeSource Self}" Path="(gridSearch:DatagridTextSearch.SearchValue)" />
+                                            </MultiBinding>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="gridSearch:DatagridTextSearch.IsTextMatch" Value="True">
+                                            <Setter Property="Background" Value="Lime" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.Resources>
+
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="" CellTemplate="{StaticResource ExpandDetails}" Width="30"/>
+                                <DataGridTextColumn Binding="{Binding Path = ListName}" Header="Наименование" Width="*"/>
+                                <DataGridTextColumn Binding="{Binding Path = ObjName}" Header="Объект управления" Width="*"/>
+                                <DataGridTextColumn Binding="{Binding Path = ControlAnalog}" Header="Аналог объекта управления" Width="*"/>
+                                <DataGridTextColumn Binding="{Binding Path = ControlStruct}" Header="Структура АСУ" Width="*"/>
+                                <DataGridTextColumn Binding="{Binding Path = Network}" Header="Сетевой протокол" Width="*"/>
+                                <DataGridTextColumn Binding="{Binding Path = Software}" Header="ПО" Width="*"/>
+                                <DataGridTextColumn Binding="{Binding Path = Document}" Header="Документация" Width="*"/>
+                                <DataGridTextColumn Binding="{Binding Path = Extra}" Header="Дополнительно" Width="*"/>
+                            </DataGrid.Columns>
+
+                            <DataGrid.RowDetailsTemplate>
+                                <DataTemplate>
+                                    <Border BorderThickness="2,0,0,0" Margin="30,0,0,0" BorderBrush="Gray">
+                                        <StackPanel Background="#4A5F93" Margin="5,5,5,5">
+                                            <!--Hardware cabinets datagrid-->
+                                            <TextBlock Text="Список оборудования" FontSize="18" Foreground="White"/>
+                                            <DataGrid x:Name="ACSHardwareDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True"
+                                              ItemsSource="{Binding Path = Cabinet, Mode=TwoWay}" IsReadOnly="True">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Binding="{Binding Path = Name}" Header="Шкаф" Width="auto"/>
+                                                    <DataGridTextColumn Binding="{Binding Path = SuppVoltage}" Header="Напр.питания" Width="auto"/>
+                                                    <DataGridTextColumn Binding="{Binding Path = OperatVoltage}" Header="Опер.напр.цепи управления" Width="auto"/>
+                                                    <DataGridTextColumn Binding="{Binding Path = RatedFreq}" Header="Ном. частота сети" Width="auto"/>
+                                                    <DataGridTextColumn Binding="{Binding Path = ProtectLevel}" Header="Степень защиты" Width="auto"/>
+                                                    <DataGridTextColumn Binding="{Binding Path = Climate}" Header="Климатическое исполнение" Width="auto"/>
+                                                    <DataGridTextColumn Binding="{Binding Path = Composition}" Header="Состав" Width="auto"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+
+                                            <!--Parameters datagrid-->
+                                            <TextBlock Text="Список контролируемых параметров" FontSize="18" Foreground="White"/>
+                                            <DataGrid x:Name="ACSParamDataGrid" Grid.Row="2" AutoGenerateColumns="False" EnableRowVirtualization="True"
+                                              ItemsSource="{Binding Path = Parameter}"
+                                              IsReadOnly="True">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Binding ="{Binding Path = ControlHwName}" Header="Агрегат управления" Width="auto"/>
+                                                    <DataGridTextColumn Binding ="{Binding Path = Parameter}" Header="Контролируемые параметры" Width="auto"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGrid.RowDetailsTemplate>
+                        </DataGrid>
+                    </StackPanel>
+                </TabItem.Content>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>

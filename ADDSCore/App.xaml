@@ -2,19 +2,23 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ADDSCore"
-             xmlns:ACSEdit ="clr-namespace:ADDSCore.Dialog.ACSEditDialog"
-             xmlns:ACSEditHw ="clr-namespace:ADDSCore.Dialog.ACSEditHwDialog"
-             xmlns:ACSEditParam ="clr-namespace:ADDSCore.Dialog.ACSEditParamDialog"
+             xmlns:modelViews ="clr-namespace:ADDSCore.ViewModels;assembly=ADDSCore.ViewModels"
+             xmlns:views ="clr-namespace:ADDSCore.Views.Controls;assembly=ADDSCore.Views"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <DataTemplate DataType="{x:Type ACSEdit:ACSQuestEditMainViewModel}">
-            <ACSEdit:ACSQuestEditMainDialog/>
+        <!--Hardware dialog binding-->
+        <DataTemplate DataType="{x:Type modelViews:AutomaEditHwVM}">
+            <views:AutomaEditHwDialog/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ACSEditHw:ACSEditHwViewModel}">
-            <ACSEditHw:ACSEditHwDialog/>
+        
+        <!--Parameter dialog binding-->
+        <DataTemplate DataType="{x:Type modelViews:AutomaEditParamVM}">
+            <views:AutomaEditParamDialog/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ACSEditParam:ACSEditParamViewModel}">
-            <ACSEditParam:ACSEditParamDialog/>
+        
+        <!--Automatics edit binding-->
+        <DataTemplate DataType="{x:Type modelViews:AutomaQuestEditVM}">
+            <views:AutomaListEditDialog/>
         </DataTemplate>
     </Application.Resources>
 </Application>
