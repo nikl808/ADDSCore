@@ -59,10 +59,6 @@
                 <Button Name="Export" ToolTip="Экспорт в Word" Margin="5,2" Command="{Binding ExportCommand}" CommandParameter="{Binding SelectedList}">
                     <fa:ImageAwesome Icon="Solid_FileWord" Width="20"/>
                 </Button>
-                <!--Send email button-->
-                <Button Name="Mail" ToolTip="Отправить" Margin="5,2" Command="{Binding SendMessCommand}" CommandParameter="{Binding SelectedList}">
-                    <fa:ImageAwesome Icon="Solid_Envelope" Width="20"/>
-                </Button>
                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="Gray"/>
                 <!--Open edit window button-->
                 <Button x:Name="Link" ToolTip="Открыть" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedList}">

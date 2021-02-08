@@ -45,7 +45,7 @@ namespace Test.ADDSCore.Document
         [Test]
         public void GenerateDocument()
         {
-            AutomaSysDocTemplate doc = new AutomaSysDocTemplate();
+            AutomaSysDocTemplate doc = new AutomaSysDocTemplate(@"d:\test.docx");
             doc.CreatePackage(testObj);
         }
     }

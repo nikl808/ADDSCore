@@ -19,22 +19,18 @@ namespace ADDSCore.Models.Business
     {
         private AutomaSysQuestnaire line;
         private Body docBody;
+        private string path;
+
+        public AutomaSysDocTemplate(string filePath) => path = filePath;
 
         #region Create document
         public void CreatePackage(AutomaSysQuestnaire line)
         {
             this.line = line;
-            
-            try
+                
+            using (WordprocessingDocument package = WordprocessingDocument.Create(path, WordprocessingDocumentType.Document))
             {
-                using (WordprocessingDocument package = WordprocessingDocument.Create(@"C:\output.docx", WordprocessingDocumentType.Document))
-                {
-                    CreateParts(package);
-                }
-            }
-            catch (Exception e)
-            {
-                //create error
+                CreateParts(package);
             }
         }
         #endregion

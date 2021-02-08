@@ -12,14 +12,14 @@ namespace ADDSCore.ViewModels
 {
     public class ACSQuestionListViewModel : INotifyPropertyChanged
     {
-        //generic dialog
-        private IDialogService dialogService;
-
         //display list to datagridview 
         public BindingList<AutomaSysQuestnaire> QuestionLists { get; set; }
-        
-
-        private AutomaQuestnaireRepo connection;
+        //generic dialog
+        private IDialogService dialogService;
+        //export dialog
+        private IDefaultDialogService exportDialog;
+        //provider to AutomaSysQuestnaire db
+        private AutomaQuestnaireRepo AutomaRepo;
 
         private Dictionary<int, ListState> actualChanges;
         private Dictionary<int, ListState> StateBeforeDelete;
@@ -29,21 +29,28 @@ namespace ADDSCore.ViewModels
         public ACSQuestionListViewModel()
         {
             dialogService = new DialogService();
+            exportDialog = new DefaultDialogService();
             actualChanges = new Dictionary<int, ListState>();
             StateBeforeDelete = new Dictionary<int, ListState>();
             undoChanges = new Stack<Tuple<int, AutomaSysQuestnaire, ListState>>();
             redoChanges = new Stack<Tuple<int, AutomaSysQuestnaire, ListState>>();
-
-            //Connect to database
-            connection = new AutomaQuestnaireRepo();
-
-            //load entities into EF Core
-            //connection.db.AutomaQuestnaire.Load();
+            AutomaRepo = new AutomaQuestnaireRepo();
 
             //bind to the source
-            //QuestionLists = new BindingList<AutomaSysQuestnaire>(connection.db.AutomaQuestnaire.Local.ToList());
-            //QuestionLists = new BindingList<AutomaSysQuestnaire>(new NotifyTaskCompletion<List<AutomaSysQuestnaire>>(connection.GetEntitiesListAsync()).Result);
-            QuestionLists = connection.GetEntitiesList();
+            QuestionLists = AutomaRepo.GetEntitiesList();
+        }
+
+        #region Commands
+        //datagrid line selection
+        private AutomaSysQuestnaire selectedList;
+        public AutomaSysQuestnaire SelectedList
+        {
+            get { return selectedList; }
+            set
+            {
+                selectedList = value;
+                OnPropertyChanged("SelectedList");
+            }
         }
 
         //new list command
@@ -73,18 +80,6 @@ namespace ADDSCore.ViewModels
             }
         }
 
-        //datagrid line selection
-        private AutomaSysQuestnaire selectedList;
-        public AutomaSysQuestnaire SelectedList
-        {
-            get { return selectedList; }
-            set
-            {
-                selectedList = value;
-                OnPropertyChanged("SelectedList");
-            }
-        }
-
         //Save database
         private UICommand saveCommand;
         public UICommand SaveCommand
@@ -94,44 +89,25 @@ namespace ADDSCore.ViewModels
                 return saveCommand ??
                     (saveCommand = new UICommand(obj =>
                     {
-                        //open connection to database 
-                        var context = new DbConnection();
-
                         foreach (var it in actualChanges)
                         {
                             //add new entry
                             if (it.Value == ListState.ADDED_FIRST || it.Value == ListState.ADDED_CHANGE)
                             {
-                                context.db.AutomaQuestnaire.Add(QuestionLists[it.Key]);
-                                context.db.SaveChanges();
+                                AutomaRepo.Create(QuestionLists[it.Key]);
+                                AutomaRepo.Save();
                             }
                             //update exist entry
                             else if (it.Value == ListState.EXIST_CHANGE)
                             {
-                                var find = QuestionLists[it.Key].Id;
-                                var autoQuest = context.db.AutomaQuestnaire.Find(find);
-
-                                if (autoQuest != null)
-                                {
-                                    autoQuest.ListName = QuestionLists[it.Key].ListName;
-                                    autoQuest.ObjName = QuestionLists[it.Key].ObjName;
-                                    autoQuest.ControlAnalog = QuestionLists[it.Key].ControlAnalog;
-                                    autoQuest.ControlStruct = QuestionLists[it.Key].ControlStruct;
-                                    autoQuest.Network = QuestionLists[it.Key].Network;
-                                    autoQuest.Software = QuestionLists[it.Key].Software;
-                                    autoQuest.Document = QuestionLists[it.Key].Document;
-                                    autoQuest.Extra = QuestionLists[it.Key].Extra;
-                                    autoQuest.Cabinet = QuestionLists[it.Key].Cabinet;
-                                    autoQuest.Parameter = QuestionLists[it.Key].Parameter;
-                                    context.db.SaveChanges();
-                                }
+                                AutomaRepo.Update(QuestionLists[it.Key]);
+                                AutomaRepo.Save();
                             }
 
                             else if (it.Value == ListState.EXIST_DELETE)
                             {
-                                var del = context.db.AutomaQuestnaire.Find(it.Key);
-                                context.db.AutomaQuestnaire.Remove(del);
-                                context.db.SaveChanges();
+                                AutomaRepo.Delete(AutomaRepo.GetEntity(it.Key));
+                                AutomaRepo.Save();
                             }
                         }
                         actualChanges.Clear();
@@ -287,8 +263,8 @@ namespace ADDSCore.ViewModels
                             actualChanges.Remove(index);
                         }
                     }
-                }));
-                /*,(obj) => QuestionLists.Count > 0*));*/
+                },
+                (obj) => QuestionLists.Count > 0));
             }
         }
 
@@ -302,30 +278,27 @@ namespace ADDSCore.ViewModels
                    (exportCommand = new UICommand(obj =>
                    {
                        AutomaSysQuestnaire list = obj as AutomaSysQuestnaire;
-                       
-                       //create .docx document
-                       AutomaSysDocTemplate docx = new AutomaSysDocTemplate();
-                       docx.CreatePackage(list);
-                   }));
-                /*,(obj) => QuestionLists.Count > 0*));*/
+                       if (list != null)
+                       {
+                           try
+                           {
+                               if(exportDialog.ExportFileDialog() == true)
+                               {
+                                   //create .docx document
+                                   AutomaSysDocTemplate docx = new AutomaSysDocTemplate(exportDialog.FilePath);
+                                   docx.CreatePackage(list);
+                               }
+                           }
+                           catch (Exception ex)
+                           {
+                               exportDialog.ShowMessage(ex.Message);
+                           }
+                       }
+                   },
+                   (obj) => QuestionLists.Count > 0));
             }
         }
-
-        //send email command
-        private UICommand sendMessCommand;
-        public UICommand SendMessCommand
-        {
-            get
-            {
-                return sendMessCommand ??
-                   (sendMessCommand = new UICommand(obj =>
-                   {
-                       //implementation
-                   }));
-                /*,(obj) => QuestionLists.Count > 0*));*/
-            }
-        }
-
+                
         //Edit current selected item
         private UICommand editCommand;
 
@@ -372,10 +345,10 @@ namespace ADDSCore.ViewModels
                                 SelectedList = result;
                             }
                         }
-                    }));
-                /*,(obj) => QuestionLists.Count > 0*));*/
+                    },(obj) => QuestionLists.Count > 0));
             }
         }
+        #endregion
 
         public void OnPropertyChanged(string propertyName)
         {
